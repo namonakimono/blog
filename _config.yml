@@ -106,3 +106,10 @@ mathjax:
   single_dollars: true # enable single dollar signs as in-line math delimiters
   cjk_width: 0.9 # relative CJK char width
   normal_width: 0.6 # relative normal (monospace) width
+
+# Security
+encrypt: # hexo-blog-encrypt
+  abstract: 文章被加密啦。Here's something encrypted.
+  message: 文章被加密啦。Hey, password is required here.
+  wrong_pass_message: 啊啊啊，进不去。Oh, this is an invalid password. Check and try again, please.
+  wrong_hash_message: Oh, these decrypted content cannot be verified, but you can still have a look.
