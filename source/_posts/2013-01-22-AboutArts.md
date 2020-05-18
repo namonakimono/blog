@@ -1,7 +1,9 @@
 ---
 title:  图书馆闲逛，绘画雕塑作品
 date: 2013-01-22 21:38:24
-tags: 逼话
+tags:
+- 逼话
+- USTC
 ---
 
 **日期：2013 年 1 月 22 日**
@@ -24,17 +26,16 @@ tags: 逼话
 
 高更：
 
-![alt 高更作品](/images/comp-1.jpg)
-
+![alt 高更作品](https://dep2u2mir2xwr.cloudfront.net/images/comp-1.jpg)
 
 蒙德里安：
-![alt 蒙德里安作品](/images/comp-2.jpg)
+![alt 蒙德里安作品](https://dep2u2mir2xwr.cloudfront.net/images/comp-2.jpg)
 
 康定斯基：
-![alt 康定斯基作品](/images/comp-3.jpg)
+![alt 康定斯基作品](https://dep2u2mir2xwr.cloudfront.net/images/comp-3.jpg)
 
 梵高：
-![alt 梵高作品](/images/comp-4.jpg)
+![alt 梵高作品](https://dep2u2mir2xwr.cloudfront.net/images/comp-4.jpg)
 
 毕加索：
-![alt 毕加索作品](/images/comp-5.jpg)
+![alt 毕加索作品](https://dep2u2mir2xwr.cloudfront.net/images/comp-5.jpg)
