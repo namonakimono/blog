@@ -14,7 +14,7 @@ timezone: ''
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: https://blog.k331.one
-root: /
+root: /blog/
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -98,7 +98,10 @@ theme: next
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: ''
+  type: 'git'
+  repo:
+      github: https://github.com/namonakimono/blog.github.io
+      branch: master
 
 # mathematics latex
 mathjax:
