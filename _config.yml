@@ -99,9 +99,8 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: 'git'
-  repo:
-      github: https://github.com/namonakimono/blog.github.io
-      branch: master
+  repo: https://github.com/namonakimono/blog
+  branch: gh-pages
 
 # mathematics latex
 mathjax:
