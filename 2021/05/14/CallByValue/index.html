@@ -30,7 +30,7 @@
 <meta property="og:description" content="2021 年 5 月 14 日 我想谈一谈我对 call-by-value、call-by-name、call-by-need、call-by-reference 的理解。这只是我的理解，应该与 Wikipedia 有出入——但我仍然坚持我的理解。 太长不看Call-by-value 与 call-by-name 放在一起比较时，call-by-value 表示函数调用时，实参要在调用函数前求到一">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-05-14T15:25:17.000Z">
-<meta property="article:modified_time" content="2021-05-15T16:49:32.831Z">
+<meta property="article:modified_time" content="2021-05-26T00:00:37.351Z">
 <meta property="article:author" content="Kylos | カラス">
 <meta property="article:tag" content="也许有用">
 <meta property="article:tag" content="计算机科学">
@@ -312,7 +312,7 @@ mjx-container + br {
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-16 00:49:32" itemprop="dateModified" datetime="2021-05-16T00:49:32+08:00">2021-05-16</time>
+                <time title="修改时间：2021-05-26 08:00:37" itemprop="dateModified" datetime="2021-05-26T08:00:37+08:00">2021-05-26</time>
               </span>
 
           
@@ -381,6 +381,7 @@ mjx-container + br {
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fn f(x) =</span><br><span class="line">    print(x)</span><br><span class="line">    x := x + 100</span><br><span class="line">    print(x)</span><br><span class="line">end fn</span><br></pre></td></tr></table></figure>
 
 <p>如果使用 call-by-name，<code>f(2+3)</code> 会得到什么样的函数体？<code>x := x + 100</code> 会变成 <code>2 + 3 := 2 + 3 + 100</code> 吗？</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>后来竟然觉得 call-by-reference 可能说的是这种：变量 obj 有自己的地址，地址中存着一个值，但这个值永远是个固定大小的 pointer，指向（heap 里的）某个真实的存储空间——所以它仍然可以看作是地址。函数调用的时候就传那个指向（heap 里的）某个真实的存储空间的 pointer。遂去查了查，这个居然叫 call-by-sharing？哎呀哎呀，行吧，感觉这一领域术语太多太乱，会用就行，不需特别理解。</p>
 
     </div>
 
@@ -469,7 +470,7 @@ mjx-container + br {
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%AA%E9%95%BF%E4%B8%8D%E7%9C%8B"><span class="nav-number">1.</span> <span class="nav-text">太长不看</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%8F%98%E9%87%8F%E5%92%8C%E5%80%BC%EF%BC%8C%E4%BB%A5%E5%8F%8A-Call-by-Value"><span class="nav-number">2.</span> <span class="nav-text">不可变变量和值，以及 Call-by-Value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E5%8F%98%E5%8F%98%E9%87%8F%E3%80%81%E5%9C%B0%E5%9D%80%E3%80%81%E5%80%BC%EF%BC%8C%E4%BB%A5%E5%8F%8A-Call-by-Value"><span class="nav-number">3.</span> <span class="nav-text">可变变量、地址、值，以及 Call-by-Value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%AA%E9%95%BF%E4%B8%8D%E7%9C%8B"><span class="nav-number">1.</span> <span class="nav-text">太长不看</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%8F%98%E9%87%8F%E5%92%8C%E5%80%BC%EF%BC%8C%E4%BB%A5%E5%8F%8A-Call-by-Value"><span class="nav-number">2.</span> <span class="nav-text">不可变变量和值，以及 Call-by-Value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E5%8F%98%E5%8F%98%E9%87%8F%E3%80%81%E5%9C%B0%E5%9D%80%E3%80%81%E5%80%BC%EF%BC%8C%E4%BB%A5%E5%8F%8A-Call-by-Value"><span class="nav-number">3.</span> <span class="nav-text">可变变量、地址、值，以及 Call-by-Value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-number">5.</span> <span class="nav-text">后记</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
