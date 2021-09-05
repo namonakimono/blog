@@ -30,7 +30,7 @@ tags:
 
 
 
-![普 500 基金的收益](/images/portofolio-01.jpeg)
+![标普 500 基金的收益](/images/portofolio-01.jpeg)
 
 **图：一只标普 500 基金的收益，对比同期沪深 300，大家更喜欢哪个呢？**
 
