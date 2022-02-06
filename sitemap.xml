@@ -368,6 +368,13 @@
 
   
   <url>
+    <loc>https://blog.k331.one/tags/%E9%80%BC%E8%AF%9D/</loc>
+    <lastmod>2022-02-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.k331.one/tags/%E4%BD%9C%E4%B8%9A/</loc>
     <lastmod>2022-02-06</lastmod>
     <changefreq>daily</changefreq>
@@ -376,13 +383,6 @@
   
   <url>
     <loc>https://blog.k331.one/tags/%E5%96%B7%E5%AD%90/</loc>
-    <lastmod>2022-02-06</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.k331.one/tags/%E9%80%BC%E8%AF%9D/</loc>
     <lastmod>2022-02-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
