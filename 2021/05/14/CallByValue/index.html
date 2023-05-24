@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.k331.one","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="2021 年 5 月 14 日 我想谈一谈我对 call-by-value、call-by-name、call-by-need、call-by-reference 的理解。这只是我的理解，应该与 Wikipedia 有出入——但我仍然坚持我的理解。 太长不看Call-by-value 与 call-by-name 放在一起比较时，call-by-value 表示函数调用时，实参要在调用函数前求到一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Call-By-X">
+<meta property="og:url" content="https://blog.k331.one/2021/05/14/CallByValue/index.html">
+<meta property="og:site_name" content="精神病人思维广">
+<meta property="og:description" content="2021 年 5 月 14 日 我想谈一谈我对 call-by-value、call-by-name、call-by-need、call-by-reference 的理解。这只是我的理解，应该与 Wikipedia 有出入——但我仍然坚持我的理解。 太长不看Call-by-value 与 call-by-name 放在一起比较时，call-by-value 表示函数调用时，实参要在调用函数前求到一">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-14T15:25:17.000Z">
+<meta property="article:modified_time" content="2023-05-17T15:46:20.617Z">
+<meta property="article:author" content="Kylos | カラス">
+<meta property="article:tag" content="也许有用">
+<meta property="article:tag" content="计算机科学">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.k331.one/2021/05/14/CallByValue/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.k331.one/2021/05/14/CallByValue/","path":"2021/05/14/CallByValue/","title":"Call-By-X"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Call-By-X | 精神病人思维广</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">精神病人思维广</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">想得太多，读得太少</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%AA%E9%95%BF%E4%B8%8D%E7%9C%8B"><span class="nav-number">1.</span> <span class="nav-text">太长不看</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%8F%98%E9%87%8F%E5%92%8C%E5%80%BC%EF%BC%8C%E4%BB%A5%E5%8F%8A-Call-by-Value"><span class="nav-number">2.</span> <span class="nav-text">不可变变量和值，以及 Call-by-Value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E5%8F%98%E5%8F%98%E9%87%8F%E3%80%81%E5%9C%B0%E5%9D%80%E3%80%81%E5%80%BC%EF%BC%8C%E4%BB%A5%E5%8F%8A-Call-by-Value"><span class="nav-number">3.</span> <span class="nav-text">可变变量、地址、值，以及 Call-by-Value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-number">5.</span> <span class="nav-text">后记</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kylos | カラス"
+      src="/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Kylos | カラス</p>
+  <div class="site-description" itemprop="description">Make Shibaken Great Again.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.k331.one/2021/05/14/CallByValue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpg">
+      <meta itemprop="name" content="Kylos | カラス">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="精神病人思维广">
+      <meta itemprop="description" content="Make Shibaken Great Again.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Call-By-X | 精神病人思维广">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Call-By-X
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-05-14 23:25:17" itemprop="dateCreated datePublished" datetime="2021-05-14T23:25:17+08:00">2021-05-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-17 23:46:20" itemprop="dateModified" datetime="2023-05-17T23:46:20+08:00">2023-05-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><strong>2021 年 5 月 14 日</strong></p>
+<p>我想谈一谈我对 <em>call-by-value</em>、<em>call-by-name</em>、<em>call-by-need</em>、<em>call-by-reference</em> 的理解。这只是我的理解，应该与 Wikipedia 有出入——但我仍然坚持我的理解。</p>
+<h2 id="太长不看"><a href="#太长不看" class="headerlink" title="太长不看"></a>太长不看</h2><p>Call-by-value 与 call-by-name 放在一起比较时，call-by-value 表示函数调用时，实参要在调用函数前求到一个<strong>值</strong>。</p>
+<p>Call-by-value 与 call-by-reference 放在一起比较时，call-by-value 表示函数调用时，实参的地址中的<strong>内容</strong>，而不是地址本身，被传入函数。</p>
+<p>所以，call-by-value 这个词在不同的语境下的含义（居然）是截然不同的，这就是问题的根源。</p>
+<h2 id="不可变变量和值，以及-Call-by-Value"><a href="#不可变变量和值，以及-Call-by-Value" class="headerlink" title="不可变变量和值，以及 Call-by-Value"></a>不可变变量和值，以及 Call-by-Value</h2><p>在（一些）函数式语言的世界，如 Haskell，变量是不可被再次赋值的。所以假使有 <code>let x = True</code>，那么 <code>x</code> 和 <code>True</code>  可以划上等号：凡是见到 <code>x</code> 的地方，都可以替换成 <code>True</code>。因为 <code>x</code> 不可变，我们也不需要关心 <code>x</code> 究竟是存储在内存中，还是存储在火星上，或者说我们有魔法，<code>x</code> 不占用任何存储空间——这根本不重要，<code>x</code> 就是个常量，我不会去找到 <code>x</code> 再它把它的内容换掉。</p>
+<p>现在我们解释<strong>值</strong>这个概念。程序语言理论中，一门简单的语言可以只有<strong>表达式</strong>（expressions），或称之为<strong>项</strong>（terms），并且这些项最终都可以计算成<strong>值</strong>（values）。换句话说，<strong>值是不可再计算的项</strong>，它通常可以是项的子集。</p>
+<p>例如，可以认为 <code>1</code> 是值但 <code>2 + 3</code>不是，因为 <code>2 + 3</code> 还可以计算到 <code>5</code>。或者说项 <code>2 + 3</code> 的值是 <code>5</code>，而项 <code>1</code>的值就是 <code>1</code> 本身。</p>
+<p>有了值的定义，便可以解释 call-by-value、call-by-name、call-by-need。</p>
+<p>对于函数定义 <code>f(x) = x + x</code>，项 <code>t = 2 * 3</code> 和函数调用 <code>f(t)</code></p>
+<ul>
+<li>Call-by-value 指的是先把项 <code>t</code> 的值求出来，即 <code>6</code>，再将其传给形参 <code>x</code>，进行函数调用。</li>
+<li>Call-by-name 指的是将 <code>t</code> 直接传给形参，进行函数调用。也就是说，函数体内的（自由出现）的 <code>x</code> 都被替换为 <code>t</code>，即函数体变为 <code>t + t</code>。此时才会去求 <code>t</code> 的值，它还<strong>被求了 2 次</strong>。</li>
+<li>Call-by-need 同 call-by-name，但保证 <code>t</code> 只求一次，可以用 memoization 实现。</li>
+</ul>
+<p>小 tip：call-by-name 不一定就比 call-by-value 慢——例如，如果 name 在函数体内没被用到，则它根本不会被计算。</p>
+<p>到这里，一切安好。</p>
+<h2 id="可变变量、地址、值，以及-Call-by-Value"><a href="#可变变量、地址、值，以及-Call-by-Value" class="headerlink" title="可变变量、地址、值，以及 Call-by-Value"></a>可变变量、地址、值，以及 Call-by-Value</h2><p>然而，在函数式之外的世界，写程序几乎就是创建一些存储单元，再不断改变这些存储单元的内容——从图灵机开始，我们便知道纸带有左移右移操作和<strong>读写</strong>操作——这便是“万恶的源泉”。</p>
+<p>为了方便地访问预先创建的存储单元，我们给这些存储单元加上标签，并起名为变量。例如，<code>int a = 0;</code> 这条语句创建了一块存储单元，将其中的内容设置为 <code>0</code>，并且可以用标签（变量） <code>a</code> 方便地找到。</p>
+<p>那么就产生了一个严肃的问题。<strong>当我提到 <code>a</code> 的时候，我到底指的是那一块存储空间呢，还是那一块存储空间里面的内容 <code>0</code> 呢？</strong><code>a = a + 100;</code> 这条赋值语句中，等号左右的 <code>a</code> 都是些什么货色呢？大多数命令式语言，为了方便书写程序，都会自动将 <code>=</code> 左边的 <code>a</code> 解释为存储空间（的别名），而将 <code>=</code> 右边的 <code>a</code> 解释为存储空间中的内容。所以 <code>a = a + 100</code> 执行后，<code>a</code> 存储单元的值就从 <code>0</code> 变成了 <code>100</code>。</p>
+<p><strong>因此，存储单元——引用，reference；存储单元的内容——值，value。</strong></p>
+<p>这就有了 call-by-value 和 call-by-reference 的区别。还是对于函数定义 <code>f(x) = x + x</code>，项 <code>t = 2 * 3</code> 和函数调用 <code>f(t)</code></p>
+<ul>
+<li>Call-by-value 指的是把项 <code>t</code> 的存储空间的内容传给实参。</li>
+<li>Call-by-reference 指的是把项 <code>t</code> 的存储空间本身的地址、位置传给实参。</li>
+</ul>
+<p>所以这里的 call-by-value 和 call-by-reference，与上一小节的 call-by-value 和 call-by-name，根本就是<strong>两个不相交的维度的概念</strong>，但却都使用了 call-by-value 这个词。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>所以说，call-by-value 在不同语境下会有不同的含义，既可以指代将 term 计算成 value 再做函数调用，也可以指代将存储地址的内容（而非地址本身）传给函数的参数。</p>
+<p>大多数语言都是将 term 计算成 value 再做函数调用（也即 <em>strict</em>），如 C 系、Java 系（好吧，jvm 系）。也有 call-by-name 和 call-by-need 的（统称为 <em>non-strict</em>），如 Haskell。</p>
+<p>C 系语言一般是传存储单元的值，array 例外。如果想传存储单元的地址，需要使用 <code>&amp;</code> 符号。Java 系语言一般是传存储单元的地址，并且，（暂时还）没办法传存储单元的值。</p>
+<p>思考题：设有函数</p>
+<figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fn f(x) =</span><br><span class="line">    <span class="keyword">print</span>(x)</span><br><span class="line">    x := x + <span class="number">100</span></span><br><span class="line">    <span class="keyword">print</span>(x)</span><br><span class="line"><span class="keyword">end</span> fn</span><br></pre></td></tr></table></figure>
+
+<p>如果使用 call-by-name，<code>f(2+3)</code> 会得到什么样的函数体？<code>x := x + 100</code> 会变成 <code>2 + 3 := 2 + 3 + 100</code> 吗？</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>后来竟然觉得 call-by-reference 可能说的是这种：变量 obj 有自己的地址，地址中存着一个值，但这个值永远是个固定大小的 pointer，指向（heap 里的）某个真实的存储空间——所以它仍然可以看作是地址。函数调用的时候就传那个指向（heap 里的）某个真实的存储空间的 pointer。遂去查了查，这个居然叫 call-by-sharing？哎呀哎呀，行吧，感觉这一领域术语太多太乱，会用就行，不需特别理解。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%B9%9F%E8%AE%B8%E6%9C%89%E7%94%A8/" rel="tag"># 也许有用</a>
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/" rel="tag"># 计算机科学</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/04/20/FPBooks/" rel="prev" title="函数式编程入门书籍 Elementary Functional Programmings">
+                  <i class="fa fa-chevron-left"></i> 函数式编程入门书籍 Elementary Functional Programmings
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/05/20/Miscs/" rel="next" title="Miscs | 包装严实，被包养与去工厂">
+                  Miscs | 包装严实，被包养与去工厂 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kylos | カラス</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.k331.one","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="浅谈 Intersection Types序一：本来打算写“浅谈 Intersection Types 和 Union Types”的，后来考虑到前者的篇幅已经有点长了，就砍成了“浅谈 Intersection Types”，后半部分以后再谈。 序二：网上其实有挺多关于 intersection types （和 union types）的文章了，且大部分是以 TypeScript 为宿主语言进行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈 Intersection Types">
+<meta property="og:url" content="https://blog.k331.one/2021/07/25/IntersectionTypes/index.html">
+<meta property="og:site_name" content="精神病人思维广">
+<meta property="og:description" content="浅谈 Intersection Types序一：本来打算写“浅谈 Intersection Types 和 Union Types”的，后来考虑到前者的篇幅已经有点长了，就砍成了“浅谈 Intersection Types”，后半部分以后再谈。 序二：网上其实有挺多关于 intersection types （和 union types）的文章了，且大部分是以 TypeScript 为宿主语言进行">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-25T15:25:17.000Z">
+<meta property="article:modified_time" content="2023-05-17T15:46:20.617Z">
+<meta property="article:author" content="Kylos | カラス">
+<meta property="article:tag" content="也许有用">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.k331.one/2021/07/25/IntersectionTypes/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.k331.one/2021/07/25/IntersectionTypes/","path":"2021/07/25/IntersectionTypes/","title":"浅谈 Intersection Types"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>浅谈 Intersection Types | 精神病人思维广</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">精神病人思维广</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">想得太多，读得太少</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%85%E8%B0%88-Intersection-Types"><span class="nav-number">1.</span> <span class="nav-text">浅谈 Intersection Types</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Intersection-%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">Intersection 类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD"><span class="nav-number">1.2.</span> <span class="nav-text">I 类型与函数重载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%9F%A5%E4%B8%8E%E9%9D%9E%E7%A1%AE%E5%AE%9A%E8%A1%8C%E4%B8%BA"><span class="nav-number">1.3.</span> <span class="nav-text">I 类型的类型检查与非确定行为</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9E%84%E9%80%A0-I-%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">1.4.</span> <span class="nav-text">如何构造 I 类型的数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-%E7%B1%BB%E5%9E%8B%E4%B8%8E-Bounded-Quantification"><span class="nav-number">1.5.</span> <span class="nav-text">I 类型与 Bounded Quantification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E8%AF%9D%E9%A2%98"><span class="nav-number">1.6.</span> <span class="nav-text">其他话题</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Kylos | カラス"
+      src="/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Kylos | カラス</p>
+  <div class="site-description" itemprop="description">Make Shibaken Great Again.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.k331.one/2021/07/25/IntersectionTypes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpg">
+      <meta itemprop="name" content="Kylos | カラス">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="精神病人思维广">
+      <meta itemprop="description" content="Make Shibaken Great Again.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="浅谈 Intersection Types | 精神病人思维广">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          浅谈 Intersection Types
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 23:25:17" itemprop="dateCreated datePublished" datetime="2021-07-25T23:25:17+08:00">2021-07-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-17 23:46:20" itemprop="dateModified" datetime="2023-05-17T23:46:20+08:00">2023-05-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="浅谈-Intersection-Types"><a href="#浅谈-Intersection-Types" class="headerlink" title="浅谈 Intersection Types"></a>浅谈 Intersection Types</h1><p>序一：本来打算写“浅谈 Intersection Types 和 Union Types”的，后来考虑到前者的篇幅已经有点长了，就砍成了“浅谈 Intersection Types”，后半部分以后再谈。</p>
+<p>序二：网上其实有挺多关于 intersection types （和 union types）的文章了，且大部分是以 TypeScript 为宿主语言进行说明的。不过那些文章比较侧重这两种类型在 TypeScript 中的使用方式，对这以外的知识鲜有说明，本文旨在弥补这一不足。 </p>
+<p>本文大量参考了《Programming with Intersection Types and Bounded Polymorphism》《Row and Bounded Polymorphism via Disjoint Polymorphism》，或者直接说翻译吧，更贴切些，毕竟也没有太多自己的原创研究。</p>
+<h2 id="Intersection-类型"><a href="#Intersection-类型" class="headerlink" title="Intersection 类型"></a><code>Intersection</code> 类型</h2><p>Intsersection 类型太长，后文一律简称 <code>I</code> 类型。</p>
+<p>相信大家在生活中经常会看到 “既要……，且要……，还要……” 这样的句式，<code>I</code> 类型正是又一例证。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Fly</span> &#123;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">fly</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Swim</span> &#123;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">swim</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Run</span> &#123;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">C</span>&lt;T <span class="keyword">extends</span> <span class="title class_">Fly</span> &amp; Swim &amp; Run&gt; &#123;</span><br><span class="line">  T omni;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">test</span><span class="params">()</span> &#123;</span><br><span class="line">    omni.fly();</span><br><span class="line">    omni.swim();</span><br><span class="line">    omni.run();</span><br><span class="line">    </span><br><span class="line">    omni.run();</span><br><span class="line">    omni.fly();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上的 Java 代码， <code>T extends Fly &amp; Swim &amp; Run</code> 部分引入的类型 <code>T</code> 本质上就是一个 <code>I</code> 类型 ，意即 <code>T</code> “既要能飞，且要会游，还要善跑”。可以看出，在函数 <code>test</code> 函数中，<code>T</code> 类型的 <code>omni</code> 确实展现出了惊动自然的能力，先后表演了飞翔、潜泳、疾驰，最后连跑带飞的溜了。刚开始介绍，不要嫌我啰嗦：“所以说，正因为 <code>T</code> 这个类型兼具了 <code>Fly</code>、<code>Swim</code>、<code>Run</code> 三个类型的所有能力，定义在这三个类型里的函数才都可以被调用；如果这三个类型有成员的话，自然也都是可以被访问的。”</p>
+<p>我们不禁要问，这样的传奇真的存在吗？还好，在代码中我们可以直接无中生有，例如</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Omnipotence</span> <span class="keyword">implements</span> <span class="title class_">Fly</span>, Swim, Run &#123;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">swim</span><span class="params">()</span> &#123; <span class="comment">/* do something */</span> &#125;;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span>  &#123; <span class="comment">/* do something */</span> &#125;;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">fly</span><span class="params">()</span>  &#123; <span class="comment">/* do something */</span> &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>便硬生生地造了一个满足要求的类型 <code>Omnipotence</code>，对造物主来说真是小事一桩。</p>
+<p>言归正传。下文中我们使用 <code>&amp;</code> 作为 <code>I</code> 类型的类型构造器。<code>&amp;</code> 接受两个类型（其实一组类型也可以，但本文想尽量简单些），并构造出单个 <code>I</code> 类型：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp; : (Type, Type) -&gt; Type  // 意会一下，我们就不引入 kind 的概念了</span><br></pre></td></tr></table></figure>
+
+<p>上文中 <code>T</code> 的类型可表示为 <code>T : Fly &amp; Swim &amp; Run</code>。</p>
+<p><code>&amp;</code> 像加法一样具有结合律，所以实现的时候不太需要关注它到底是左结合的还是右结合的，随意啦。</p>
+<p>如果还是觉得不好理解的话，不妨回想一下函数类型 <code>T -&gt; R</code>，我们可以说 <code>-&gt;</code> 是函数类型的类型构造器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-&gt; : (Type, Type) -&gt; Type</span><br><span class="line"></span><br><span class="line">// 把 Int -&gt; Bool 理解为 -&gt;(Int, Bool)的结果好了</span><br></pre></td></tr></table></figure>
+
+<p><code>I</code> 类型的简要介绍到此为止，下面我们谈谈它与<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%82%E6%95%B0%E5%A4%9A%E6%80%81">参数化多态</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%89%B9%E8%AE%BE%E5%A4%9A%E6%80%81">特设多态</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD">函数重载</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E7%A1%AE%E5%AE%9A%E5%9E%8B%E5%9B%BE%E7%81%B5%E6%9C%BA">非确定性</a>（链接是非确定性图灵机的，凑合一下）的关系。</p>
+<h2 id="I-类型与函数重载"><a href="#I-类型与函数重载" class="headerlink" title="I 类型与函数重载"></a><code>I</code> 类型与函数重载</h2><p>如果同一个作用域下的函数 <code>f</code> 定义了好几次且构成重载，那么 <code>f</code> 具有什么类型呢？我想聪明的读者应该已经想到了，很明显，<code>f</code> 可以具有 <code>I</code> 类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">f : Int -&gt; Int</span><br><span class="line">f : Double -&gt; Double</span><br></pre></td></tr></table></figure>
+
+<p>我们不妨把 <code>f</code> 的类型写成 <code>Int -&gt; Int &amp; Double -&gt; Double</code>。为了少写几个括号，我们假设 <code>-&gt;</code> 的结合性比 <code>&amp;</code> 更强。</p>
+<p>这样的 <code>f</code>，既可以处理整数，也可以处理浮点数，因此 <code>f(1)</code> （假设 <code>1</code> 不符合浮点数语法）与 <code>f(1.0)</code> 均为合法的调用——前者选用 <code>Int -&gt; Int</code> 的逻辑处理，后者选用 <code>Double -&gt; Double</code> 的逻辑处理 。</p>
+<p>如果再给 <code>f</code> 新增一个能处理布尔类型的定义</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f : Bool -&gt; Bool</span><br></pre></td></tr></table></figure>
+
+<p>那么函数调用 <code>f(true)</code> 也将是合法的，此时 <code>f</code> 的类型将变成 <code>Int -&gt; Int &amp; Double -&gt; Double &amp; Bool -&gt; Bool</code>。</p>
+<p>那么 I 类型可以替代重载吗？我认为取决于需求。</p>
+<h2 id="I-类型的类型检查与非确定行为"><a href="#I-类型的类型检查与非确定行为" class="headerlink" title="I 类型的类型检查与非确定行为"></a><code>I</code> 类型的类型检查与非确定行为</h2><p>根据《Programming with Intersection Types and Bounded Polymorphism》，<code>I</code> 类型的类型检查会“穷尽每一种可能”。在做函数调用 <code>f(t)</code>时，如果 <code>f</code> 和 <code>t</code> 都是 <code>I</code> 类型，那么每一组可以“匹配”的类型都会产生一个结果类型；如果“匹配”的类型超过一个，那么函数调用的结果类型仍然是一个 <code>I</code> 类型，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">f : Bool -&gt; Bool &amp; Bool -&gt; Int</span><br><span class="line">t : Bool</span><br><span class="line"></span><br><span class="line">f(t) : Bool &amp; Int</span><br></pre></td></tr></table></figure>
+
+<p>因为 <code>f</code> 的 <code>Bool -&gt; Bool</code> 部分和 <code>Bool -&gt; Int</code> 部分都可调用，所以它们会分别接受参数 <code>t</code> 并且生成结果。生成的结果亦使用 <code>&amp;</code> 相连组成一个 <code>I</code> 类型。</p>
+<p>这里便可以看出传统的 <code>I</code> 类型检查中的函数调用与常见的函数重载的不同了：函数重载会根据参数类型选取一个特定的、在某种条件下“最优”的 <code>f</code> 类型，如果无法选取则报错——例如此例中，没有其他更多信息时 <code>f(t)</code> 这个调用是要报类型错误的，而 <code>I</code> 类型会枚举并尝试每一种可能。</p>
+<p>下面再看另一个例子，加深对 <code>I</code> 类型的函数调用的理解：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">f : Bool -&gt; Bool &amp; Int -&gt; Int &amp; Double -&gt; Double</span><br><span class="line">t : Bool &amp; Int</span><br><span class="line"></span><br><span class="line">f(t) : Bool &amp; Int</span><br></pre></td></tr></table></figure>
+
+<p>这里函数本身和入参都是 <code>I</code> 类型。入参 <code>t</code> 既有 <code>Bool</code> 的特质也有 <code>Int</code> 的特质：</p>
+<ul>
+<li>当 <code>t</code> 呈现 <code>Bool</code> 的特质时，<code>f : Bool -&gt; Bool</code> 这部分特质是可应用、“匹配”的，函数调用的结果为 <code>Bool</code> 类型；</li>
+<li>而 <code>t</code> 作为 <code>Int</code> 时，<code>f : Int -&gt; Int</code> 这部分特质时可应用的，函数调用的结果为 <code>Int</code> 类型。</li>
+</ul>
+<p>因此 <code>f(t)</code> 的结果仍然为 <code>I</code> 类型的 <code>Bool &amp; Int</code>。此即为 <code>I</code> 类型的类型检查中最“有趣”的部分。</p>
+<p>由此我们还能得到另一个结论，I 类型与函数重载都是特设多态，而不是参数化多态，因为其对不同入参类型的处理逻辑不同。</p>
+<h2 id="如何构造-I-类型的数据"><a href="#如何构造-I-类型的数据" class="headerlink" title="如何构造 I 类型的数据"></a>如何构造 <code>I</code> 类型的数据</h2><p>如果 <code>I</code> 类型是由函数类型组成的，似乎我们还可以通过多次定义同名函数来实现；但上文中我们使用了 <code>t : Bool &amp; Int</code> 这种神奇的数据，那么这种数据是如何构造出的呢？</p>
+<p>答案其实很简单，也很复杂。简单性在于只需要引入一种新的数据构造语法：正如<code>(,)</code> 语法可构造出 tuple 类型，我们可以新增例如 <code>(,,)</code>这样的语法来构造出 <code>I</code> 类型的数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">true : Bool</span><br><span class="line"></span><br><span class="line">1 : Int</span><br><span class="line"></span><br><span class="line">(true, 1) : Bool * Int // tuple type</span><br><span class="line"></span><br><span class="line">(true ,, 1) : Bool &amp; Int // intersection type</span><br></pre></td></tr></table></figure>
+
+<p>而复杂性在于其背后的实现，（我猜）没有 IR 支持 <code>I</code> 类型，所以翻译到 IR 前，表层语言的 <code>I</code> 类型需要通过“解糖”或者其他（elaboration）手段消除，而这份工作显然没有那么轻松。</p>
+<h2 id="I-类型与-Bounded-Quantification"><a href="#I-类型与-Bounded-Quantification" class="headerlink" title="I 类型与 Bounded Quantification"></a><code>I</code> 类型与 Bounded Quantification</h2><p>简单的 <code>I</code> 类型与简单的 bounded quantification 是可以互换的。看下面的函数定义</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">C</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">Bool f&lt;T <span class="keyword">extends</span> <span class="title class_">C</span>&gt;(T) &#123; <span class="keyword">return</span> <span class="literal">true</span> &#125;</span><br><span class="line"><span class="comment">// f : &lt;T &lt;: C&gt;. T -&gt; Bool</span></span><br><span class="line"></span><br><span class="line">Bool f&lt;T&gt;(T &amp; C) &#123; <span class="keyword">return</span> <span class="literal">true</span> &#125;</span><br><span class="line"><span class="comment">// f : &lt;T&gt;. (T &amp; C) -&gt; Bool</span></span><br></pre></td></tr></table></figure>
+
+<p>直观来看，其实这两个函数定义说了同一件事：别管实际的入参是什么类型，它都要具备 <code>C</code> 类型的所有特质——即为 <code>C</code> 类型的子类型——其他特质我不管。</p>
+<p>由于本文只是入坑指南，更详尽的例子和解释请参考文中提到的论文。</p>
+<h2 id="其他话题"><a href="#其他话题" class="headerlink" title="其他话题"></a>其他话题</h2><ul>
+<li><code>I</code> 类型与 tuple 类型很像，但显然不等价，它们的关系是？</li>
+<li><code>I</code> 类型该如何设计，是否要具有幂等性？</li>
+<li><code>I</code> 类型该如何设计，是否要求组成类型没有交集？（是否要设计成 disjoint intersection types）</li>
+<li>如果类型系统等价于逻辑系统，那么 <code>I</code> 类型是否等价于逻辑中的“与”？还是说 tuple 类型才是逻辑中那个深入人心的“与”？</li>
+<li>……</li>
+</ul>
+<p>问题总比方法多，欢迎各位观众老爷前往挑战 <code>I</code> 类型。</p>
+<hr>
+<p>微信<strong>编程语言 Lab</strong> 公众号也有转载。</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/A_hiVgZCOpPka700eLLiRg">https://mp.weixin.qq.com/s/A_hiVgZCOpPka700eLLiRg</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%B9%9F%E8%AE%B8%E6%9C%89%E7%94%A8/" rel="tag"># 也许有用</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/07/24/Flood/" rel="prev" title="最近的台风与洪水">
+                  <i class="fa fa-chevron-left"></i> 最近的台风与洪水
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/09/05/Portfolio/" rel="next" title="适合普通韭菜的投资指南（Part II）">
+                  适合普通韭菜的投资指南（Part II） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kylos | カラス</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
