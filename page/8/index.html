@@ -131,13 +131,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">73</span>
+          <span class="site-state-item-count">75</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -156,6 +156,203 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.k331.one/2021/05/14/CallByValue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpg">
+      <meta itemprop="name" content="Kylos | カラス">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="精神病人思维广">
+      <meta itemprop="description" content="Make Shibaken Great Again.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 精神病人思维广">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/05/14/CallByValue/" class="post-title-link" itemprop="url">Call-By-X</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-05-14 23:25:17" itemprop="dateCreated datePublished" datetime="2021-05-14T23:25:17+08:00">2021-05-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-17 23:46:20" itemprop="dateModified" datetime="2023-05-17T23:46:20+08:00">2023-05-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><strong>2021 年 5 月 14 日</strong></p>
+<p>我想谈一谈我对 <em>call-by-value</em>、<em>call-by-name</em>、<em>call-by-need</em>、<em>call-by-reference</em> 的理解。这只是我的理解，应该与 Wikipedia 有出入——但我仍然坚持我的理解。</p>
+<h2 id="太长不看"><a href="#太长不看" class="headerlink" title="太长不看"></a>太长不看</h2><p>Call-by-value 与 call-by-name 放在一起比较时，call-by-value 表示函数调用时，实参要在调用函数前求到一个<strong>值</strong>。</p>
+<p>Call-by-value 与 call-by-reference 放在一起比较时，call-by-value 表示函数调用时，实参的地址中的<strong>内容</strong>，而不是地址本身，被传入函数。</p>
+<p>所以，call-by-value 这个词在不同的语境下的含义（居然）是截然不同的，这就是问题的根源。</p>
+<h2 id="不可变变量和值，以及-Call-by-Value"><a href="#不可变变量和值，以及-Call-by-Value" class="headerlink" title="不可变变量和值，以及 Call-by-Value"></a>不可变变量和值，以及 Call-by-Value</h2><p>在（一些）函数式语言的世界，如 Haskell，变量是不可被再次赋值的。所以假使有 <code>let x = True</code>，那么 <code>x</code> 和 <code>True</code>  可以划上等号：凡是见到 <code>x</code> 的地方，都可以替换成 <code>True</code>。因为 <code>x</code> 不可变，我们也不需要关心 <code>x</code> 究竟是存储在内存中，还是存储在火星上，或者说我们有魔法，<code>x</code> 不占用任何存储空间——这根本不重要，<code>x</code> 就是个常量，我不会去找到 <code>x</code> 再它把它的内容换掉。</p>
+<p>现在我们解释<strong>值</strong>这个概念。程序语言理论中，一门简单的语言可以只有<strong>表达式</strong>（expressions），或称之为<strong>项</strong>（terms），并且这些项最终都可以计算成<strong>值</strong>（values）。换句话说，<strong>值是不可再计算的项</strong>，它通常可以是项的子集。</p>
+<p>例如，可以认为 <code>1</code> 是值但 <code>2 + 3</code>不是，因为 <code>2 + 3</code> 还可以计算到 <code>5</code>。或者说项 <code>2 + 3</code> 的值是 <code>5</code>，而项 <code>1</code>的值就是 <code>1</code> 本身。</p>
+<p>有了值的定义，便可以解释 call-by-value、call-by-name、call-by-need。</p>
+<p>对于函数定义 <code>f(x) = x + x</code>，项 <code>t = 2 * 3</code> 和函数调用 <code>f(t)</code></p>
+<ul>
+<li>Call-by-value 指的是先把项 <code>t</code> 的值求出来，即 <code>6</code>，再将其传给形参 <code>x</code>，进行函数调用。</li>
+<li>Call-by-name 指的是将 <code>t</code> 直接传给形参，进行函数调用。也就是说，函数体内的（自由出现）的 <code>x</code> 都被替换为 <code>t</code>，即函数体变为 <code>t + t</code>。此时才会去求 <code>t</code> 的值，它还<strong>被求了 2 次</strong>。</li>
+<li>Call-by-need 同 call-by-name，但保证 <code>t</code> 只求一次，可以用 memoization 实现。</li>
+</ul>
+<p>小 tip：call-by-name 不一定就比 call-by-value 慢——例如，如果 name 在函数体内没被用到，则它根本不会被计算。</p>
+<p>到这里，一切安好。</p>
+<h2 id="可变变量、地址、值，以及-Call-by-Value"><a href="#可变变量、地址、值，以及-Call-by-Value" class="headerlink" title="可变变量、地址、值，以及 Call-by-Value"></a>可变变量、地址、值，以及 Call-by-Value</h2><p>然而，在函数式之外的世界，写程序几乎就是创建一些存储单元，再不断改变这些存储单元的内容——从图灵机开始，我们便知道纸带有左移右移操作和<strong>读写</strong>操作——这便是“万恶的源泉”。</p>
+<p>为了方便地访问预先创建的存储单元，我们给这些存储单元加上标签，并起名为变量。例如，<code>int a = 0;</code> 这条语句创建了一块存储单元，将其中的内容设置为 <code>0</code>，并且可以用标签（变量） <code>a</code> 方便地找到。</p>
+<p>那么就产生了一个严肃的问题。<strong>当我提到 <code>a</code> 的时候，我到底指的是那一块存储空间呢，还是那一块存储空间里面的内容 <code>0</code> 呢？</strong><code>a = a + 100;</code> 这条赋值语句中，等号左右的 <code>a</code> 都是些什么货色呢？大多数命令式语言，为了方便书写程序，都会自动将 <code>=</code> 左边的 <code>a</code> 解释为存储空间（的别名），而将 <code>=</code> 右边的 <code>a</code> 解释为存储空间中的内容。所以 <code>a = a + 100</code> 执行后，<code>a</code> 存储单元的值就从 <code>0</code> 变成了 <code>100</code>。</p>
+<p><strong>因此，存储单元——引用，reference；存储单元的内容——值，value。</strong></p>
+<p>这就有了 call-by-value 和 call-by-reference 的区别。还是对于函数定义 <code>f(x) = x + x</code>，项 <code>t = 2 * 3</code> 和函数调用 <code>f(t)</code></p>
+<ul>
+<li>Call-by-value 指的是把项 <code>t</code> 的存储空间的内容传给实参。</li>
+<li>Call-by-reference 指的是把项 <code>t</code> 的存储空间本身的地址、位置传给实参。</li>
+</ul>
+<p>所以这里的 call-by-value 和 call-by-reference，与上一小节的 call-by-value 和 call-by-name，根本就是<strong>两个不相交的维度的概念</strong>，但却都使用了 call-by-value 这个词。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>所以说，call-by-value 在不同语境下会有不同的含义，既可以指代将 term 计算成 value 再做函数调用，也可以指代将存储地址的内容（而非地址本身）传给函数的参数。</p>
+<p>大多数语言都是将 term 计算成 value 再做函数调用（也即 <em>strict</em>），如 C 系、Java 系（好吧，jvm 系）。也有 call-by-name 和 call-by-need 的（统称为 <em>non-strict</em>），如 Haskell。</p>
+<p>C 系语言一般是传存储单元的值，array 例外。如果想传存储单元的地址，需要使用 <code>&amp;</code> 符号。Java 系语言一般是传存储单元的地址，并且，（暂时还）没办法传存储单元的值。</p>
+<p>思考题：设有函数</p>
+<figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fn f(x) =</span><br><span class="line">    <span class="keyword">print</span>(x)</span><br><span class="line">    x := x + <span class="number">100</span></span><br><span class="line">    <span class="keyword">print</span>(x)</span><br><span class="line"><span class="keyword">end</span> fn</span><br></pre></td></tr></table></figure>
+
+<p>如果使用 call-by-name，<code>f(2+3)</code> 会得到什么样的函数体？<code>x := x + 100</code> 会变成 <code>2 + 3 := 2 + 3 + 100</code> 吗？</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>后来竟然觉得 call-by-reference 可能说的是这种：变量 obj 有自己的地址，地址中存着一个值，但这个值永远是个固定大小的 pointer，指向（heap 里的）某个真实的存储空间——所以它仍然可以看作是地址。函数调用的时候就传那个指向（heap 里的）某个真实的存储空间的 pointer。遂去查了查，这个居然叫 call-by-sharing？哎呀哎呀，行吧，感觉这一领域术语太多太乱，会用就行，不需特别理解。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.k331.one/2021/04/20/FPBooks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpg">
+      <meta itemprop="name" content="Kylos | カラス">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="精神病人思维广">
+      <meta itemprop="description" content="Make Shibaken Great Again.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 精神病人思维广">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/04/20/FPBooks/" class="post-title-link" itemprop="url">函数式编程入门书籍 Elementary Functional Programmings</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-04-20 23:25:17" itemprop="dateCreated datePublished" datetime="2021-04-20T23:25:17+08:00">2021-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-17 23:46:20" itemprop="dateModified" datetime="2023-05-17T23:46:20+08:00">2023-05-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在编程语言这一点上，其实本人知道的也比较有限，只是比普通程序员多懂一点。</p>
+<p>以前读书的时候感觉周围的 PL（即 programming languages）研究者们关心的都是语言的“前中端问题”，例如类型系统和语义等；并没有太多与虚拟机、垃圾回收、IR 优化相关的话题。所以我这边推荐的入门书籍也还是以类型系统和语义为主的。</p>
+<p>对这些入门书籍的学习不仅仅是可以很好地了解编程语言的类型系统与语义，以至为 PL 专业的硕士、博士研究生铺平道路。更重要的是可以了解 turing-machine 之外的另一种计算模型，即 lambda calculus；可以了解到大家熟悉的 imperative、state-based、loop-based 之外的另一种编程思想，即 declarative、function-based、recursion-based 的编程思想——这种新的思想不一定能带来代码运行速度上的提升，但却几乎一定能带来抽象能力、问题拆解能力的提升。</p>
+<p>废话说得比较多了，下面是一些本人有所了解的书籍，有些可能比较旧了。而且书籍这种东西，对其评价或许也是带有很强的主观色彩的。</p>
+<p><a target="_blank" rel="noopener" href="https://www.cis.upenn.edu/~bcpierce/tapl/">《Types and Programming Languages》</a>，即耳熟能详的 TAPL，作者是 Pierce, Benjamin C。这是一本 2002 年出版的书，挺老了，但仍然是一本很棒的 PL <em>入门书</em>。通过阅读（和动手），我们会学到类型系统和语义的相关知识，以及 lambda calculus 的入门知识。可以从中系统地了解多态（即 polymorphism，如 Java 泛型，C++ 模板）的几个维度：类型依赖类型（如 <code>class List&lt;X&gt;</code>），项（类型的成员）依赖类型（如 <code>&lt;T&gt; boolean contains(Collection&lt;T&gt; c)</code>），以及类型依赖项（常用来写证明，无法用 Java 举例）；而最后一个最为常见的且抽象层级比较低的，项依赖项，就是大家最为熟悉的函数或者说方法。书中还会详尽地介绍子类型系统、交类型、并类型，以及子类型中的型变。这些知识对于日常编程以及熟练掌握一门程序语言自然是大有裨益的。此外，贯穿全书的是语言的类型检查、语义的形式化写法，以及两个重要结论及其证明：1 通过类型检查的代码要么是值，要么可以继续计算到值（progress），2 通过类型检查的代码，计算后的结果仍然可通过类型检查（preservation）。考察一门语言时，这两点也是要重点审视的。另外，就中国内地来说，北京大学有开课，可以参考，课件或许更适合中国人学习？（有一个比较精简的，Luca Cardelli 的《Type Systems》，40 几页，复习的时候用挺好。）</p>
+<p><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~rwh/pfpl/">《Practical Foundations for Programming Languages》</a>，即 PFPL，作者是 Robert Harper（<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~rwh/pfpl/2nded.pdf">官方免费版戳此</a>）。广度感觉特别广（特别是相对于上一本来说），覆盖了方方面面。唉，但一直没时间看，或者说每次看到 total functions 那里都中断了……我把大的主题（每一个主题都有若干章节）列一下吧，看完就知道有多广了：Judgments and Rules，Statics and Dynamics，Total Functions，Finite Data Types，Types and Propositions，Infinite Data Types，Variable Types，Partiality and Recursive Types，Dynamic Types，Subtyping，Dynamic Dispatch，Control Flow，Symbolic Data，Mutable State，Parallelism，Concurrency and Distribution，Modularity，Equational Reasoning。</p>
+<p>[《Type Theory and Formal Proof: An Introduction》](Type Theory and Formal Proof: An Introduction)，我只看了前 9 章左右，就我看的部分来说，基本在讲 lambda calculus。看引用数可能不是一本特别好的书，但对初学与入门 lambda calculus 的我来说还是很有帮助的。Lambda calculus 保留了核心的函数构造和函数调用，而将其余的语言成分（如自然数）都视为前者的编码。我们会惊叹原来这两条规则已经图灵完备了，任意复杂的代码都可以由其组合出。书里让我印象比较深刻的，一是前几个章节对不同维度的多态的介绍（在第一本书 TAPL 中有提及），以及最终组合出的精美的 lambda cube；二是 lambda calculus 通过统一、简洁的符号，表示出的 term : type : kind : sort 这一条链（如 <code>true : Bool : * : □</code>），至此（typing 的） <code>term : type</code> 和（kinding 的）<code>type : kind</code> 的许多规则可以统一合并；三是逻辑和类型的对应关系，例如逻辑中的 <code>P =&gt; Q</code> 就是 <code>P -&gt; Q</code> 这个函数类型呀。</p>
+<p><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/the-implementation-of-functional-programming-languages/">《The Implementation of Functional Programming Languages》</a>，没有博士学位的 Simon Peyton Jones 的著作，也是一本很老的书了，网上有<a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/the-implementation-of-functional-programming-languages/">官方公开的免费版</a>。这本书比较注重实践，读起来没那么抽象。前半部分讲了如何对一个还算丰富的表层语言做类型检查、解糖、翻译到精简的核心语言。如果我没记错的话，核心中的核心是 match 表达式和模式匹配。后半部分讲了图规约（graph reduction）算法和基于图规约的中间表示（IR）和抽象机 G-machine，以及相关的优化算法。这是一种完全不同于栈机（stack machine）的抽象机。Haskell 的编译器 GHC 的实现中大量用到了本书中的思想（毕竟本书作者就是 “GHC 之父”）。</p>
+<p>如果想学习函数式的数据结构和算法，那么 Chris Okasaki 的《Purely Functional Data Structures》（<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~rwh/theses/okasaki.pdf">这里有一本</a>）和 Richard Bird 的《Pearls of Functional Algorithm Design》（<a target="_blank" rel="noopener" href="https://doc.lagout.org/programmation/Functional%20Programming/Pearls%20of%20Functional%20Algorithm%20Design.pdf">这里有一本</a>）就挺好的。我记得读大学的时候，红黑树的删除（含旋转）操作简直是噩梦。但函数式基于模式匹配的写法，似乎十几行就完事了，理解起来异常简单。当然，我得提醒，函数式其实也没有高明到哪里，它不是万能的（这儿还有<a target="_blank" rel="noopener" href="https://www.infoq.cn/article/fzrra9e9kyo2ca56b2mv">一篇文章</a>）。</p>
+<p>学写证明的话，最近几年新出的《The Little Typer》或许不错。活到现在还不太会写证明，抱歉。</p>
+<p>说了这么多，其实有些大佬的页面就是宝藏。比如这位有三四个博士学位的（好像是物理、化学、计算机等）Oleg Kiselyov 的<a target="_blank" rel="noopener" href="http://okmij.org/ftp/">页面</a>就够大部分学一辈子了。里头都是抽象度贼高的运行速度还贼快的硬核神奇代码，再配上论文。<del>反正我是学不太会。</del></p>
+<p>另外，上面的推荐书籍也看出来了，我不是 Lisp 派。所以就遗漏了《Structure and Interpretation of Computer Programs》、《Essentials  of Programming Languages》等圣经。里面有些设计电路的章节也挺让人印象深刻的，确实巧妙。说起来就不爽，计算机理论专业干嘛要教 Verilog HDL 这种语言和用它写电路呢？听说牛津大学就是用 Haskell 写电路的。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -231,7 +428,7 @@
 <li>定投策略可考虑<strong>下跌多投，上涨少投</strong>（或定额）。如果还是没有想法，可以用带有此功能的 app，例如蛋卷基金（提醒：赎回到银行卡较慢）。</li>
 <li>放入基金的钱应该是 <strong>2 年内不用的钱</strong>。换句话说，得做好 2 年不盈利的准备。</li>
 </ul>
-<p><img src="/images/portofolio-01.jpeg" alt="标普 500 基金的收益"></p>
+<p><img data-src="/images/portofolio-01.jpeg" alt="标普 500 基金的收益"></p>
 <p><strong>图：一只标普 500 基金的收益，对比同期沪深 300，大家更喜欢哪个呢？</strong></p>
 <h3 id="结论展开：为什么定投宽基指数基金"><a href="#结论展开：为什么定投宽基指数基金" class="headerlink" title="结论展开：为什么定投宽基指数基金"></a>结论展开：为什么定投宽基指数基金</h3><p>选择基金表明自己放弃微观上的“择时”，即充分意识到自己就是一棵韭菜，放弃一天交易多次。（场外）基金每天只有一个价格（15:00 的收盘价），而股票的价格每秒都在波动，一天的最低价和最高价能差上百分之几十。<del>毕竟相同的钱，股票一个月就玩没了，基金可能可以玩上个大半年，何乐而不为呢？</del>好吧，正经地说来，</p>
 <ul>
@@ -240,7 +437,7 @@
 <li><p>有些天价股一手要二十几万（比如茅台），很多人买不起（或者补仓困难），而基金起购点多为100元、10元、1元等，价格亲民。</p>
 </li>
 <li><p>个人觉得 A 股内幕消息比国外的股市多（虽然在改善），基金公司显然会比普通人更有机会接触到内幕消息，提前买入或者提前跑路。</p>
-<p><img src="/images/portofolio-02.png" alt="内幕消息"></p>
+<p><img data-src="/images/portofolio-02.png" alt="内幕消息"></p>
 <p><strong>数据来源：上文提到的伍志坚老师的书中的图8-3</strong></p>
 </li>
 </ul>
@@ -266,9 +463,9 @@
 <li>少量中证 500 和 中证 1000 只是意思意思，也可以当预警，毕竟股灾崩盘前中证 1000 一般可是很神勇的，至少 2015 年说明了这一点。<del>说白了还是小赌。</del></li>
 </ul>
 <p>（另外，伍志坚老师在他的书中提到，基金过往的业绩、基金经理的教育程度、毕业院校、甚至是否金融经济专业，长远来看（大于 5 年）对基金的最终收益影响都很小，好像是在 0.01% 这个量级左右。而基金收取的费用（管理费，申购费等）等才是最影响最终收益的。但我没怎么研究这一项。）</p>
-<p><img src="/images/portofolio-03.png" alt="中证 1000"></p>
+<p><img data-src="/images/portofolio-03.png" alt="中证 1000"></p>
 <p>图：<strong>股灾前夜的中证 1000，可以看到，2015 年 2 月份到 6 月份涨幅超过 100%</strong></p>
-<p><img src="/images/portofolio-03.png" alt="沪深 300"></p>
+<p><img data-src="/images/portofolio-03.png" alt="沪深 300"></p>
 <p>图：<strong>股灾前夜的沪深 300，2015 年 2 月份到 6 月份涨幅 63%</strong></p>
 <p><strong>如果想买基金了</strong></p>
 <p>定投不是梭哈，所以肯定不会一次把钱花完的</p>
@@ -486,203 +683,6 @@
 <p>——说白了就是菜不怎么样，尽整一堆花里胡哨的。</p>
 <p>这里不得不说一下日本东京。在东京可以<strong>不太费力地找到一些只做一种类菜的店家</strong>，菜不贵（一顿 RMB 100 以下）且<strong>美味</strong>，有些还有米其林星级（另一些大概只是还没进去）。由衷地感谢、佩服这些匠人。</p>
 <p>听书的时候可以顺便活动筋骨，效率 1.5 倍何乐而不为？我是越来越觉得大部分书籍只要听个观点和精简概括的例子就够了，特别是知识性或者技能类的——若不是为了优雅细腻的描写（它们大部分也没有优雅细腻的描写），就没必要整本认真看完。例子只是为了帮助读者理解逻辑，自洽的逻辑自然易懂，也没必要一一过目。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.k331.one/2020/11/04/Digimon/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpg">
-      <meta itemprop="name" content="Kylos | カラス">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精神病人思维广">
-      <meta itemprop="description" content="Make Shibaken Great Again.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 精神病人思维广">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/11/04/Digimon/" class="post-title-link" itemprop="url">今晚看了一部（幼稚的）动画</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-11-04 23:28:17" itemprop="dateCreated datePublished" datetime="2020-11-04T23:28:17+08:00">2020-11-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-17 23:46:20" itemprop="dateModified" datetime="2023-05-17T23:46:20+08:00">2023-05-17</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><strong>2020 年 11 月 4 日</strong></p>
-<p>今晚看了一部（幼稚的）动画。</p>
-<p>动画里矛盾还挺鲜明的，但不知为何弄得这么幼稚——难道这也是一对矛盾吗，那我只能说妙啊😂——也可能是我比预定观影年龄大了关键的几岁？我总感觉这动画是给临近大学毕业或者刚毕业工作的人（21岁～23岁）看的。</p>
-<p>开篇伴随着与时代格格不入的画质，上演了一场动画里的全明星阵容的战斗，算是人物介绍（主角重温）吧。值得一提的是，背景音乐居然是《Bolero》（一种西班牙舞曲）。还好 opening 过后画质恢复了 2020 的水准——没骗我钱。</p>
-<p>随后满屏的暗黄色，落日、剪影、居酒屋等意象，奠定了整篇的基调——它与《宠物小精灵》、《名侦探柯南》显然不是一路货色。而这点在全篇都有多处体现：背景多为暗淡、鲜红色、黄色的巨幅画面，要么就是雨天，亦或黑色天空、冰封万里数码世界；而主角的身影却多显渺小，甚至在强光下只能看到剪影。<strong>巨幅背景与渺小的人物对比较为鲜明</strong>。</p>
-<p>故事中其实有比较明显的对比，例如在人生道路上，对未来选择最迷茫的两人，却是数码世界最（唯一）清晰的两人。所以他们真的是迷茫吗？<strong>也许只是比其他人更清醒</strong>。</p>
-<p>然而故事的脸谱化现象也比较（非常吧）明显，例如设置了 Sora 这个从头到尾都不愿意帮忙和战斗的形象。其实<strong>长大后周围的人大体都是这样吧，不参与、不发声，安稳地过日子，避免卷入任何麻烦</strong>。</p>
-<p>像个 SB 一样的大反派就不提了，看着都觉得尬。</p>
-<p>总的来说，背景烘托挺好看的，矛盾也挺明显的——但为什么最终表现得这么幼稚😂。</p>
-<p>（看的是数码宝贝 20 周年。）</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.k331.one/2020/05/23/Nanjing/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpg">
-      <meta itemprop="name" content="Kylos | カラス">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精神病人思维广">
-      <meta itemprop="description" content="Make Shibaken Great Again.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 精神病人思维广">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/05/23/Nanjing/" class="post-title-link" itemprop="url">南京半日游</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-05-23 19:28:17" itemprop="dateCreated datePublished" datetime="2020-05-23T19:28:17+08:00">2020-05-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-17 23:46:20" itemprop="dateModified" datetime="2023-05-17T23:46:20+08:00">2023-05-17</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="憋说了，南京还是你大哥呀"><a href="#憋说了，南京还是你大哥呀" class="headerlink" title="憋说了，南京还是你大哥呀"></a><del>憋说了，南京还是你大哥呀</del></h1><h1 id="南京半日游"><a href="#南京半日游" class="headerlink" title="南京半日游"></a>南京半日游</h1><p>（流量警告，内有 20 张大图。 墙内的<del>姐妹</del>兄弟没有 VPN 的话是基本看不到图的，可以现在直接 control + w “一键”告辞。）</p>
-<p>活了这么久，这还是我第一次一个人去南京。嘛，说来也怪，我这么挑剔的一个人，对南京的印象居然还挺好的。</p>
-<p><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-1.jpeg" alt="alt 升州城"></p>
-<p>那就还是按<del>令人窒息的又熟悉的</del>流水账的顺序来写吧。</p>
-<p>先说一下南京与我家（安徽滁州）的相对地理位置。我家离南京特别近，以前 K 字头的红皮车过去车程只有 45 分钟，现在有了高铁， 18 分钟 就到了😳。<del>南京不愧是安徽省会！</del>不过因为滁州的高铁站离我住的地方太远（快 15km 了，对比之下，老火车站只有 2.2 km），又没有轨道交通，加上南京的高铁站（南京南）离老市区繁华地带也比较远，这次我索性就买了张 K 字头的车票，顺便重温一下快十年没坐过的普通火车的乘车体验。体验下来确实比较省时省力。然后虽然官方给出的乘车时长是 1 个小时，但其实来回都只需要 45 分钟。（也就是说火车要在站里停 20 分钟之久 😳……）说起来，我还以为会是红皮车或者白皮车，没想到（来回都）是绿皮车 😂。</p>
-<p><em>滁州站。一辆货车。</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/PlatformAndCargoTrain.jpeg" alt="alt 货车"></p>
-<h2 id="南京站"><a href="#南京站" class="headerlink" title="南京站"></a>南京站</h2><p>下火车后，发现乘坐“特定车次”车票的人会被“防护服们”拖走，不知道是不是要核酸检测，还是只是简单地弄弄。（反正我不是，快步溜了溜了。）</p>
-<p><em>南京站，建筑上还是挺漂亮的！<del>其实刚下火车就有一种果然大哥还是那个大哥的感觉了。</del></em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/NanjingStation-1.jpeg" alt="alt 南京站，一"></p>
-<p><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/NanjingStation-2.jpeg" alt="alt 南京站，二"></p>
-<p><em>列车停靠后，每一节车厢旁都有乘务员“站岗”，他们会检查登车乘客的票。<del>这样整齐地站着，感觉比高铁带感呀。</del></em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/NanjingStation-3.jpeg" alt="alt 南京站，三"></p>
-<p>出站，换乘地铁 1 号线。南京站里火车换地铁超级方便，不需要二次安检，爽啊！（记得我有一次在虹桥机场国际线换国内线，安检了三次，简直呵呵 😑。）地铁的闸机是双扇门而不是三杠杆，完爆上海（很大部分地铁站）。站台的各种指路牌和标识很到位而且密度足够，不会出现在车里往外看，不知道在哪一站的情况，完爆上海。出站口甚至有公交信息（杭州也有），与北京那种颐和园站出去后都不知道颐和园在哪的<del>垃圾</del>城市比起来高下立判！（不记得上海的情况了。）地铁上的广播也不跟乘客瞎逼逼，音量合适，没有特别吵，印象里深圳的某条去机场的线路其车上广播快给我整崩溃了。<del>所以说大哥还是大哥呀。</del>嘛，虽然感觉政府很努力了，但是这座城市的很多人还是学不会先下后上……</p>
-<p>（额，5 月份后来又去了次上海，发现上海虹桥高铁换地铁也不需要重新安检了～地铁站月台的告示牌也增设了很多，在地铁内终于知道现在在哪一站了——至少往月台看的话是会知道的。挺好的，才几年时间，日新月异呀——至少二号线没毛病。~~但是 10 号线的天潼路地铁站还是让我开眼界了，往 A 方向开的月台的柱子上印的居然是朝相反方向开的车的路线图，你们这是要“开（历史的）倒车”咯？把它印在 B 方向月台的柱子上不好吗 😂？）</p>
-<p><em>地铁站的公交信息告示牌<del>，虽然很久没更新了。</del></em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/InformationBoard.jpeg" alt="alt 信息牌"></p>
-<p><em>说起来，地铁一号线里面的灯光是暖黄光，跟坐飞机似的 😂，不过比较亮。</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/SubwayLine1.jpeg" alt="alt 地铁一号线"></p>
-<p><em>新街口站的某出口</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/MetroExit.jpeg" alt="alt 新街口站的某出口"></p>
-<h2 id="新街口某商场"><a href="#新街口某商场" class="headerlink" title="新街口某商场"></a>新街口某商场</h2><p>出来后随便溜进了一间商场（地下楼层）逛了逛<del>，感觉基本都是女装啊。</del>曲曲折折，赞。音乐也挺舒缓的。（好像是不同区域有不同的音乐。）<br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/MetroMall-1.jpeg" alt="alt 新街口站的某商场，一"></p>
-<p><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/MetroMall-2.jpeg" alt="alt 新街口站的某商场，二"></p>
-<p><em>出口也还行吧，就是二维码太 <del>TM</del> 辣眼睛了，直接毁了一副作品和一张作品。</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/MetroMallExit.jpeg" alt="alt 新街口站的某商场的某出口"></p>
-<p>商场出入口处的小广场上有些<del>看起来还不错的</del>雕塑。<del>（手指挡到镜头了，请不要在意。）</del>上一次在城市里看到这种类型的雕塑可能要追溯到去鹿儿岛旅游的时候了 🤔。说起来这一阵子空气挺不错的啊，意外意外！<del>是不是因为疫情嘛。</del><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/XinjiekouSculpture-1.jpeg" alt="alt 新街口站某商场前的雕塑，一"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/XinjiekouSculpture-2.jpeg" alt="alt 新街口站某商场前的雕塑，二"></p>
-<h2 id="新街口至升州城"><a href="#新街口至升州城" class="headerlink" title="新街口至升州城"></a>新街口至升州城</h2><p>这之后就是从新街口徒步走到升州城夫子庙那边了，沿途没怎么拍。印象大概就是人行道旁的参天梧桐大大大，路树成荫，赞！<del>以及有些地方会传出来阵阵臭味</del>。人行道的路就那样吧，不算好，也不算破。机动车道的路牌都是中英双语的，赞！<del>就是这个湿度让人有点遭不住。</del></p>
-<p><em>每个城市都会有的“一中”</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/No1MiddleSchool.jpeg" alt="alt 一中"></p>
-<p><em>要我说这地铁站指示牌也是有点精髓的……怎么说呢，这 “1 号线”怎么贴在侧面 😂</em>。<del>哪来那么多废话，有就不错了。</del><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/InformationBoard-2.jpeg" alt="alt 地铁站指示牌"></p>
-<p><em>政府提供的公共自行车的贷出率这么高的吗？大哥到底是怎么做到的……</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/NanjingPublicBicycles.jpeg" alt="alt 公共自行车"></p>
-<p>后面基本就都是<del>（大尺度的）色</del>图了。</p>
-<h2 id="升州城，大板巷"><a href="#升州城，大板巷" class="headerlink" title="升州城，大板巷"></a>升州城，大板巷</h2><p>店铺基本都没开，基本就是在巷子里走走逛逛，看看风景。</p>
-<p><em>嗯我就是从这里一个不小心进去的 😳</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-0.jpeg" alt="alt 大板巷，入口"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-1.jpeg" alt="alt 大板巷，一"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-2.jpeg" alt="alt 大板巷，二"></p>
-<p><em>35号建筑</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-3.jpeg" alt="alt 大板巷，三"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-4.jpeg" alt="alt 大板巷，四"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-5.jpeg" alt="alt 大板巷，五"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-6.jpeg" alt="alt 大板巷，六"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-7.jpeg" alt="alt 大板巷，七"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-8.jpeg" alt="alt 大板巷，八"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-9.jpeg" alt="alt 大板巷，九"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-10.jpeg" alt="alt 大板巷，十"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-11.jpeg" alt="alt 大板巷，十一"></p>
-<p><em>一些工艺品</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-Goods.jpeg" alt="alt 大板巷，~~物资~~工艺品"></p>
-<p><em>能把信息牌做好可不是件简单的事哦</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-Guidance.jpeg" alt="alt 大板巷，信息牌"></p>
-<p><em>这大概才是入口</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/Shengzhoucheng-12.jpeg" alt="alt 大板巷，十二"></p>
-<h2 id="水游城"><a href="#水游城" class="headerlink" title="水游城"></a>水游城</h2><p>又是一个充满色彩的商场<del>，看名字还以为是水族馆</del>。</p>
-<p><em>就这样吧，阳光太强，对比太强</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/AquaCity-1.jpeg" alt="alt 水游城，一"></p>
-<p><em>这些店铺哦……一眼望过去，稍微有点回到了日本的错觉。<del>虽然在日本好像反而没见过 Casio 就是了</del></em> <del>😂</del><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/AquaCity-2.jpeg" alt="alt 水游城，二"></p>
-<p><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/AquaCity-3.jpeg" alt="alt 水游城，三"></p>
-<p><em>总觉得拍出了彩虹</em> 😳<br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/AquaCity-4.jpeg" alt="alt 水游城，四"><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/AquaCity-5.jpeg" alt="alt 水游城，五"></p>
-<p><em>回廊是很形象<del>很装逼</del>了，但这个英语……Canyon 不是峡谷吗？</em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/AquaCity-Canyon.jpeg" alt="alt 水游城，告示牌"></p>
-<p><em>最后，还是遭不住小吃广告的谐气啊<del>，MDZZ</del></em><br><img src="https://dep2u2mir2xwr.cloudfront.net/images/20200523Nanjing/AquaCity-MDZZ.jpeg" alt="alt 水游城，一"></p>
 
       
     </div>

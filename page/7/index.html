@@ -131,13 +131,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">73</span>
+          <span class="site-state-item-count">75</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -156,6 +156,299 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.k331.one/2021/07/25/IntersectionTypes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpg">
+      <meta itemprop="name" content="Kylos | カラス">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="精神病人思维广">
+      <meta itemprop="description" content="Make Shibaken Great Again.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 精神病人思维广">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/25/IntersectionTypes/" class="post-title-link" itemprop="url">浅谈 Intersection Types</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-25 23:25:17" itemprop="dateCreated datePublished" datetime="2021-07-25T23:25:17+08:00">2021-07-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-17 23:46:20" itemprop="dateModified" datetime="2023-05-17T23:46:20+08:00">2023-05-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="浅谈-Intersection-Types"><a href="#浅谈-Intersection-Types" class="headerlink" title="浅谈 Intersection Types"></a>浅谈 Intersection Types</h1><p>序一：本来打算写“浅谈 Intersection Types 和 Union Types”的，后来考虑到前者的篇幅已经有点长了，就砍成了“浅谈 Intersection Types”，后半部分以后再谈。</p>
+<p>序二：网上其实有挺多关于 intersection types （和 union types）的文章了，且大部分是以 TypeScript 为宿主语言进行说明的。不过那些文章比较侧重这两种类型在 TypeScript 中的使用方式，对这以外的知识鲜有说明，本文旨在弥补这一不足。 </p>
+<p>本文大量参考了《Programming with Intersection Types and Bounded Polymorphism》《Row and Bounded Polymorphism via Disjoint Polymorphism》，或者直接说翻译吧，更贴切些，毕竟也没有太多自己的原创研究。</p>
+<h2 id="Intersection-类型"><a href="#Intersection-类型" class="headerlink" title="Intersection 类型"></a><code>Intersection</code> 类型</h2><p>Intsersection 类型太长，后文一律简称 <code>I</code> 类型。</p>
+<p>相信大家在生活中经常会看到 “既要……，且要……，还要……” 这样的句式，<code>I</code> 类型正是又一例证。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Fly</span> &#123;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">fly</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Swim</span> &#123;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">swim</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Run</span> &#123;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">C</span>&lt;T <span class="keyword">extends</span> <span class="title class_">Fly</span> &amp; Swim &amp; Run&gt; &#123;</span><br><span class="line">  T omni;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">test</span><span class="params">()</span> &#123;</span><br><span class="line">    omni.fly();</span><br><span class="line">    omni.swim();</span><br><span class="line">    omni.run();</span><br><span class="line">    </span><br><span class="line">    omni.run();</span><br><span class="line">    omni.fly();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上的 Java 代码， <code>T extends Fly &amp; Swim &amp; Run</code> 部分引入的类型 <code>T</code> 本质上就是一个 <code>I</code> 类型 ，意即 <code>T</code> “既要能飞，且要会游，还要善跑”。可以看出，在函数 <code>test</code> 函数中，<code>T</code> 类型的 <code>omni</code> 确实展现出了惊动自然的能力，先后表演了飞翔、潜泳、疾驰，最后连跑带飞的溜了。刚开始介绍，不要嫌我啰嗦：“所以说，正因为 <code>T</code> 这个类型兼具了 <code>Fly</code>、<code>Swim</code>、<code>Run</code> 三个类型的所有能力，定义在这三个类型里的函数才都可以被调用；如果这三个类型有成员的话，自然也都是可以被访问的。”</p>
+<p>我们不禁要问，这样的传奇真的存在吗？还好，在代码中我们可以直接无中生有，例如</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Omnipotence</span> <span class="keyword">implements</span> <span class="title class_">Fly</span>, Swim, Run &#123;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">swim</span><span class="params">()</span> &#123; <span class="comment">/* do something */</span> &#125;;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span>  &#123; <span class="comment">/* do something */</span> &#125;;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">fly</span><span class="params">()</span>  &#123; <span class="comment">/* do something */</span> &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>便硬生生地造了一个满足要求的类型 <code>Omnipotence</code>，对造物主来说真是小事一桩。</p>
+<p>言归正传。下文中我们使用 <code>&amp;</code> 作为 <code>I</code> 类型的类型构造器。<code>&amp;</code> 接受两个类型（其实一组类型也可以，但本文想尽量简单些），并构造出单个 <code>I</code> 类型：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp; : (Type, Type) -&gt; Type  // 意会一下，我们就不引入 kind 的概念了</span><br></pre></td></tr></table></figure>
+
+<p>上文中 <code>T</code> 的类型可表示为 <code>T : Fly &amp; Swim &amp; Run</code>。</p>
+<p><code>&amp;</code> 像加法一样具有结合律，所以实现的时候不太需要关注它到底是左结合的还是右结合的，随意啦。</p>
+<p>如果还是觉得不好理解的话，不妨回想一下函数类型 <code>T -&gt; R</code>，我们可以说 <code>-&gt;</code> 是函数类型的类型构造器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-&gt; : (Type, Type) -&gt; Type</span><br><span class="line"></span><br><span class="line">// 把 Int -&gt; Bool 理解为 -&gt;(Int, Bool)的结果好了</span><br></pre></td></tr></table></figure>
+
+<p><code>I</code> 类型的简要介绍到此为止，下面我们谈谈它与<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%82%E6%95%B0%E5%A4%9A%E6%80%81">参数化多态</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%89%B9%E8%AE%BE%E5%A4%9A%E6%80%81">特设多态</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD">函数重载</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E7%A1%AE%E5%AE%9A%E5%9E%8B%E5%9B%BE%E7%81%B5%E6%9C%BA">非确定性</a>（链接是非确定性图灵机的，凑合一下）的关系。</p>
+<h2 id="I-类型与函数重载"><a href="#I-类型与函数重载" class="headerlink" title="I 类型与函数重载"></a><code>I</code> 类型与函数重载</h2><p>如果同一个作用域下的函数 <code>f</code> 定义了好几次且构成重载，那么 <code>f</code> 具有什么类型呢？我想聪明的读者应该已经想到了，很明显，<code>f</code> 可以具有 <code>I</code> 类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">f : Int -&gt; Int</span><br><span class="line">f : Double -&gt; Double</span><br></pre></td></tr></table></figure>
+
+<p>我们不妨把 <code>f</code> 的类型写成 <code>Int -&gt; Int &amp; Double -&gt; Double</code>。为了少写几个括号，我们假设 <code>-&gt;</code> 的结合性比 <code>&amp;</code> 更强。</p>
+<p>这样的 <code>f</code>，既可以处理整数，也可以处理浮点数，因此 <code>f(1)</code> （假设 <code>1</code> 不符合浮点数语法）与 <code>f(1.0)</code> 均为合法的调用——前者选用 <code>Int -&gt; Int</code> 的逻辑处理，后者选用 <code>Double -&gt; Double</code> 的逻辑处理 。</p>
+<p>如果再给 <code>f</code> 新增一个能处理布尔类型的定义</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f : Bool -&gt; Bool</span><br></pre></td></tr></table></figure>
+
+<p>那么函数调用 <code>f(true)</code> 也将是合法的，此时 <code>f</code> 的类型将变成 <code>Int -&gt; Int &amp; Double -&gt; Double &amp; Bool -&gt; Bool</code>。</p>
+<p>那么 I 类型可以替代重载吗？我认为取决于需求。</p>
+<h2 id="I-类型的类型检查与非确定行为"><a href="#I-类型的类型检查与非确定行为" class="headerlink" title="I 类型的类型检查与非确定行为"></a><code>I</code> 类型的类型检查与非确定行为</h2><p>根据《Programming with Intersection Types and Bounded Polymorphism》，<code>I</code> 类型的类型检查会“穷尽每一种可能”。在做函数调用 <code>f(t)</code>时，如果 <code>f</code> 和 <code>t</code> 都是 <code>I</code> 类型，那么每一组可以“匹配”的类型都会产生一个结果类型；如果“匹配”的类型超过一个，那么函数调用的结果类型仍然是一个 <code>I</code> 类型，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">f : Bool -&gt; Bool &amp; Bool -&gt; Int</span><br><span class="line">t : Bool</span><br><span class="line"></span><br><span class="line">f(t) : Bool &amp; Int</span><br></pre></td></tr></table></figure>
+
+<p>因为 <code>f</code> 的 <code>Bool -&gt; Bool</code> 部分和 <code>Bool -&gt; Int</code> 部分都可调用，所以它们会分别接受参数 <code>t</code> 并且生成结果。生成的结果亦使用 <code>&amp;</code> 相连组成一个 <code>I</code> 类型。</p>
+<p>这里便可以看出传统的 <code>I</code> 类型检查中的函数调用与常见的函数重载的不同了：函数重载会根据参数类型选取一个特定的、在某种条件下“最优”的 <code>f</code> 类型，如果无法选取则报错——例如此例中，没有其他更多信息时 <code>f(t)</code> 这个调用是要报类型错误的，而 <code>I</code> 类型会枚举并尝试每一种可能。</p>
+<p>下面再看另一个例子，加深对 <code>I</code> 类型的函数调用的理解：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">f : Bool -&gt; Bool &amp; Int -&gt; Int &amp; Double -&gt; Double</span><br><span class="line">t : Bool &amp; Int</span><br><span class="line"></span><br><span class="line">f(t) : Bool &amp; Int</span><br></pre></td></tr></table></figure>
+
+<p>这里函数本身和入参都是 <code>I</code> 类型。入参 <code>t</code> 既有 <code>Bool</code> 的特质也有 <code>Int</code> 的特质：</p>
+<ul>
+<li>当 <code>t</code> 呈现 <code>Bool</code> 的特质时，<code>f : Bool -&gt; Bool</code> 这部分特质是可应用、“匹配”的，函数调用的结果为 <code>Bool</code> 类型；</li>
+<li>而 <code>t</code> 作为 <code>Int</code> 时，<code>f : Int -&gt; Int</code> 这部分特质时可应用的，函数调用的结果为 <code>Int</code> 类型。</li>
+</ul>
+<p>因此 <code>f(t)</code> 的结果仍然为 <code>I</code> 类型的 <code>Bool &amp; Int</code>。此即为 <code>I</code> 类型的类型检查中最“有趣”的部分。</p>
+<p>由此我们还能得到另一个结论，I 类型与函数重载都是特设多态，而不是参数化多态，因为其对不同入参类型的处理逻辑不同。</p>
+<h2 id="如何构造-I-类型的数据"><a href="#如何构造-I-类型的数据" class="headerlink" title="如何构造 I 类型的数据"></a>如何构造 <code>I</code> 类型的数据</h2><p>如果 <code>I</code> 类型是由函数类型组成的，似乎我们还可以通过多次定义同名函数来实现；但上文中我们使用了 <code>t : Bool &amp; Int</code> 这种神奇的数据，那么这种数据是如何构造出的呢？</p>
+<p>答案其实很简单，也很复杂。简单性在于只需要引入一种新的数据构造语法：正如<code>(,)</code> 语法可构造出 tuple 类型，我们可以新增例如 <code>(,,)</code>这样的语法来构造出 <code>I</code> 类型的数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">true : Bool</span><br><span class="line"></span><br><span class="line">1 : Int</span><br><span class="line"></span><br><span class="line">(true, 1) : Bool * Int // tuple type</span><br><span class="line"></span><br><span class="line">(true ,, 1) : Bool &amp; Int // intersection type</span><br></pre></td></tr></table></figure>
+
+<p>而复杂性在于其背后的实现，（我猜）没有 IR 支持 <code>I</code> 类型，所以翻译到 IR 前，表层语言的 <code>I</code> 类型需要通过“解糖”或者其他（elaboration）手段消除，而这份工作显然没有那么轻松。</p>
+<h2 id="I-类型与-Bounded-Quantification"><a href="#I-类型与-Bounded-Quantification" class="headerlink" title="I 类型与 Bounded Quantification"></a><code>I</code> 类型与 Bounded Quantification</h2><p>简单的 <code>I</code> 类型与简单的 bounded quantification 是可以互换的。看下面的函数定义</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">C</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">Bool f&lt;T <span class="keyword">extends</span> <span class="title class_">C</span>&gt;(T) &#123; <span class="keyword">return</span> <span class="literal">true</span> &#125;</span><br><span class="line"><span class="comment">// f : &lt;T &lt;: C&gt;. T -&gt; Bool</span></span><br><span class="line"></span><br><span class="line">Bool f&lt;T&gt;(T &amp; C) &#123; <span class="keyword">return</span> <span class="literal">true</span> &#125;</span><br><span class="line"><span class="comment">// f : &lt;T&gt;. (T &amp; C) -&gt; Bool</span></span><br></pre></td></tr></table></figure>
+
+<p>直观来看，其实这两个函数定义说了同一件事：别管实际的入参是什么类型，它都要具备 <code>C</code> 类型的所有特质——即为 <code>C</code> 类型的子类型——其他特质我不管。</p>
+<p>由于本文只是入坑指南，更详尽的例子和解释请参考文中提到的论文。</p>
+<h2 id="其他话题"><a href="#其他话题" class="headerlink" title="其他话题"></a>其他话题</h2><ul>
+<li><code>I</code> 类型与 tuple 类型很像，但显然不等价，它们的关系是？</li>
+<li><code>I</code> 类型该如何设计，是否要具有幂等性？</li>
+<li><code>I</code> 类型该如何设计，是否要求组成类型没有交集？（是否要设计成 disjoint intersection types）</li>
+<li>如果类型系统等价于逻辑系统，那么 <code>I</code> 类型是否等价于逻辑中的“与”？还是说 tuple 类型才是逻辑中那个深入人心的“与”？</li>
+<li>……</li>
+</ul>
+<p>问题总比方法多，欢迎各位观众老爷前往挑战 <code>I</code> 类型。</p>
+<hr>
+<p>微信<strong>编程语言 Lab</strong> 公众号也有转载。</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/A_hiVgZCOpPka700eLLiRg">https://mp.weixin.qq.com/s/A_hiVgZCOpPka700eLLiRg</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.k331.one/2021/07/24/Flood/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpg">
+      <meta itemprop="name" content="Kylos | カラス">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="精神病人思维广">
+      <meta itemprop="description" content="Make Shibaken Great Again.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 精神病人思维广">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/24/Flood/" class="post-title-link" itemprop="url">最近的台风与洪水</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-24 17:40:17" itemprop="dateCreated datePublished" datetime="2021-07-24T17:40:17+08:00">2021-07-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-17 23:46:20" itemprop="dateModified" datetime="2023-05-17T23:46:20+08:00">2023-05-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><strong>2021 年 7 月 24 日</strong></p>
+<p>大暑前后，台风洪水比较多。前几天是郑州和周边城市被干，今天是杭州周边城市被干。本着不给防风防洪防汛添乱的原则，周末就宅在家里哪也没去。</p>
+<p>其实本文也没什么实质性内容，就是随便查查，查完随便喷喷，喷完随便写写<del>，写完随便删删</del>。激发我查阅兴趣的主要有三点：一是在家闲的，难得的时间；二是在杭州滨江区生活了一年多。因为一到雨天就看见柏油马路就到处是水坑，又见过三次排水口被堵（其中一次水已没过人行道，在创伟科技园旁边），一直觉得滨江区排水不畅；总觉得郑州那个雨量换到滨江的话，滨江应该已经成亚特兰蒂斯了。三是对郑州这百年一遇乃至“千年遇一”的自然灾害比较好奇。</p>
+<p>目录</p>
+<ul>
+<li>郑州、河南历史上的雨灾</li>
+<li>东京的排水能力</li>
+<li>杭州对烟花的应对方式</li>
+<li>宁波余姚水灾与“浙江滚出中国”</li>
+<li>我对杭州的感观：杭州的基建与发展</li>
+</ul>
+<h2 id="郑州被干"><a href="#郑州被干" class="headerlink" title="郑州被干"></a>郑州被干</h2><p>郑州的降雨量确实大，7 月 20 日 16 时至 17 时，峰值雨量为 201.9mm，而 24 小时平均雨量达 253mm。可能很多人（尤其是文科生（没有贬低的意思））对降水量没有什么概念，不过可以回想起 400mm 等降水线的概念，这个概念告诉我们很多地方一年只下 400mm的雨——即使一年只有少到 50 个雨天，那平均每个雨天只有至多 8mm 的降雨，253mm 就是30多倍。或者这么看，郑州以往的平均年降雨量为 640.8mm，而近三天的降雨量为617.1mm，三天顶一年。</p>
+<h2 id="河南不是第一次被干，这次的雨也不是最大的"><a href="#河南不是第一次被干，这次的雨也不是最大的" class="headerlink" title="河南不是第一次被干，这次的雨也不是最大的"></a>河南不是第一次被干，这次的雨也不是最大的</h2><p>我很好奇这么大的雨是不是史无前例，就顺着微博上的 758 关键字查了查。原来 758 是指 1975 年 8 月的一场洪水。1975 年 8 月，河南驻马店不幸承受了史称 758 特大洪水的灾难。当年的 8 月 5 日至 6 日，板桥雨量站测得日降雨量为 448.1mm（不过最大每小时峰值雨量小一些，只有 142.8mm），位于灾难中心的泌阳林庄8月7日一天的降雨量达到1005.4mm，最大 6 小时降雨量更达到 830.1mm。有兴趣的可以自行搜索。</p>
+<h2 id="这种雨沿海大城市也顶不住"><a href="#这种雨沿海大城市也顶不住" class="headerlink" title="这种雨沿海大城市也顶不住"></a>这种雨沿海大城市也顶不住</h2><p>这样的大雨，我直观感觉有天然泄洪优势的沿海城市也是顶不住的。比如我们可以看看东京的泄洪能力——只因我在东京待过 5 年，期间几乎没见过积水，所以感觉东京的排水是相当好，就拿出来作个对比。</p>
+<p>东京有个叫做首都圈外郭放水路的工程（可以网上搜搜图，围观一下，毕竟也是热门旅游景点），修了 14 年，大概 130 多亿人民币。这个工程的排水能力是每小时可承受最多 50 毫米的降水，并且在人口和建筑稠密的三个城区可承受 65-75mm 的降水。所以光看排水能力，一样顶不住 200mm 的峰值降雨。即使算上 67 万立方米的总贮水量，我算下来也是不够的，而且差距非常之大。不过如果峰值小一些，全天的降水倒还是真的可以顶住……</p>
+<h2 id="烟花来了，杭州怎么顶"><a href="#烟花来了，杭州怎么顶" class="headerlink" title="烟花来了，杭州怎么顶"></a>烟花来了，杭州怎么顶</h2><p>烟花带来的降水与前面提到的史诗级灾难比起来并不算大，但听说萧山区已经有些地方被水淹没、不知所措了。</p>
+<p>我在网上并没有查阅到关于萧山的新闻，倒是搜到了一票为杭州市防风防汛歌功颂德的新闻，比如</p>
+<blockquote>
+<p>截至7月23日15时，各区、县（市）、管委会绿化管理部门、养护企业已清理断枝植物723株，26.51吨；已支撑树木数量46453株，其中已支撑行道树21545株，扶正倒伏树木23株。</p>
+<p>全市共发送雨情预警通告单18份，发送各类预警短信3762条；出动水利技术力量68组634人次，对805处水利工程进行防台检查；全市大中型水库已全部降至汛限水位以下，并通过发电预腾库容；钱塘江沿线闸门开闸预降，萧绍平原和上塘河开始预排，累计预排水量1168万立方米，上塘河水位已由3.30米已降至2.89米；钱塘江沿线闸泵共发布调度指令8条，执行调度预排预泄排涝43台时，预排水量1132万立方米。</p>
+<p>部分“老牌”积水点，也是各地各部门提前布防的重点。记者从杭州市城管局了解到，目前，该局已先后组织开展5轮汛前隐患大排查大整治，主要围绕排水设施、城市道路、户外广告、下穿桥涵、河道围堰等重点设施、部位，以及钱江新城、天目山路沿线等重点区域。累计清疏管网长度达7436公里，排查发现的风险隐患均已完成工程整改或落实应急处置“一点一方案”。</p>
+</blockquote>
+<p>感觉杭州可以啊。于是又反手搜了搜郑州的，似乎没啥相关新闻，只搜到了说让停课停工却不听话的新闻。不知是杭州风险意识和宣传双到位，还是郑州确实菜，又或者是单纯地被后续新闻淹没了。不过有<a target="_blank" rel="noopener" href="https://user.guancha.cn/main/content?id=556044">下面的讨论</a>，评论区挺尖锐的。</p>
+<blockquote>
+<p>这次郑州的大雨应急工作，对照本人既往经历，感觉存在不少问题，但这个问题不是懒政、不作为或者乱作为的问题，是应急经验欠缺的问题……</p>
+</blockquote>
+<p>我随后望了望窗外，西兴这小破地方百来米的马路上有30来块井盖（虽然大部分应该是燃气光纤电缆相关的），顿时感觉滨江区可能也没那么糟糕。</p>
+<h2 id="浙江滚出中国"><a href="#浙江滚出中国" class="headerlink" title="浙江滚出中国"></a>浙江滚出中国</h2><p>查着台风与洪水的话题，最后还是来到了 2013 年宁波余姚的水灾事件。这事情 ZF 处理得不是很好，像黑历史一样，但我觉得应该也是真的。</p>
+<blockquote>
+<p>2013年宁波水灾是2013年10月发生在浙江宁波的一起由台风引发暴雨造成的严重水灾。水灾中，甬江流域遭遇有水文记录以来最大规模的降雨，加之天文大潮的影响，宁波多地发生严重内涝，交通、电力长时间大面积中断，其中尤以余姚市发生的灾害最为严重。据统计，宁波全市遭受经济损失超过333亿元，受灾人口达到248万人</p>
+</blockquote>
+<p>当时余姚过程降水量达到 496.4mm，其中张公岭站达到 809mm，也是巨大，本应得到救助与同情。但因入驻的央视记者粉饰太平，在重灾区的路上睁眼说瞎话说没洪水了，直接被愤怒的市民围堵了，也有说被掀翻的。我只能说活该吧，没缺胳膊少腿不是挺好的？下面是看到的一两段网友描述，我觉得应该是真的吧，真收了 5 美分的话也不至于在冷门帖子下面讨论：</p>
+<blockquote>
+<p>我就是余姚的，当时灾情真的很严重，经济损失很大，很多天城区、城镇交通都是瘫痪的，电视台也只有浙江台和宁波台真实的播放了水灾情况，央视新闻也是过了一段时间才轻描淡写的播了一下而已，热搜挂着余姚滚出中国，浙江滚出中国，网友还说浙江人有钱，可以自救，这些都是事实。从那个时候开始，我宁可把钱丢水里，也不往外捐了…</p>
+</blockquote>
+<blockquote>
+<p>那时候我家还在余姚老城区，整整一个星期，断电断水，楼下积水淹到腰，在水里泡了好几个钟头走路去把家里的老人接过来，一家人靠一个收音机获取外界信息，慈溪人开着大卡车过来给我们送蜡烛食物和充电宝</p>
+</blockquote>
+<blockquote>
+<p>哈哈哈，我还有照片…什么毛宏芳滚回奉化种田…市政府门口的为人民服务牌子都被人拆了。发洪水当天晚上我收留了一帮外地人，身边将近 40 万现金，提心吊胆一晚上，生怕他妈的被人抢了，当时已经做好准备了，真的要抢就让他们抢，钱是国家的，命是自己的。我还免费供应了矿泉水，面包，红牛。也算是出了把力。军队的话，我说说我看到的吧，南京军区的部队开进来了，当时我对面是梨洲街道派出所，那里有个救灾物资发放点，当时就发了一点点物资，（几箱矿泉水，还没我发的多）拍了个照部队就转移了，亲眼所见，所言非虚。</p>
+</blockquote>
+<p>再然后呀，热搜就有了“浙江滚出中国”这一条，还占了一天的头条位置。</p>
+<p>那次的事件好像处理得非常不好，似乎余姚没太收到外界捐赠，之后官方也不太组织捐款。</p>
+<blockquote>
+<p>捐款捐出一堆白眼狼呗，还好从那之后就再无官方捐款</p>
+</blockquote>
+<blockquote>
+<p>这两年知道2013年的事情才想起来似乎有好多年学校没有组织捐款了….</p>
+</blockquote>
+<blockquote>
+<p>余姚水灾之后，浙江给全国的捐款从此少了很多。那些老乡省份人士目的达到了</p>
+</blockquote>
+<blockquote>
+<p>这倒是真的，那两年之后就再没捐过款了，之前不捐还要被老师拉办公室谈话</p>
+</blockquote>
+<p>我只想说，世界真大……真的清一色全是情绪极强的话，感觉那个市的市民受到了成吨的伤害</p>
+<blockquote>
+<p>从那以后心彻底寒了，甚至看见一些外省贫困地区的儿童午餐留守儿童啊那些捐款的活动，我觉得他们可怜可是我一点都不同情他们，也不会再捐款。还有我出去买东西和淘宝购物也尽量挑发货地浙江的。我曾经有过爱心，会帮助别人，但是余姚事情让我认清楚了不是每个你帮助过的人都会在你困难的时候伸出援手，他可能会对你说：“活该”。</p>
+</blockquote>
+<blockquote>
+<p>真的我记得我小学的时候我们学校常常组织捐钱给贫困山区 包括其他地方发生了天灾 我们也捐 直到那一年隔壁的余姚台风很大 发生了水灾 印象中记得老师眼眶微红说：竟然没一个地方捐款…</p>
+</blockquote>
+<blockquote>
+<p>余姚那事真的是心寒了，以前别的省有事，每次都捐款，这次自己省有事，其他省让我们滚出中国！受灾那么严重，除了省内新闻，央视都轻描淡写而过，心寒</p>
+</blockquote>
+<p>看看户口，现在我也是浙江集体户，属于人下人了。不小心搬过去的。</p>
+<h2 id="最后说点别的，关于浙江与杭州"><a href="#最后说点别的，关于浙江与杭州" class="headerlink" title="最后说点别的，关于浙江与杭州"></a>最后说点别的，关于浙江与杭州</h2><p>浙江省确实挺逗的，经济不错，但（建国后）高校就有点难堪。说好听点，全省最差的 211 是浙江大学，全省最差的 985 也是浙江大学。浙江省高校就这，但院士还挺多，全国院士最多的省份是江苏，有两院院士 477人，第二就是浙江，有两院院士 407 人，第三名山东已经不到 200 人了。（不过这也就随口说说，毕竟院士里也有一部分专业水平比较菜的。）</p>
+<p>我对杭州的印象挺好的。</p>
+<p>从政府方面来看，很多政务服务可以网上办理，去当面办理时态度也比较好。政府的标语是“最多跑一次”，而且办理速度还很快，我的租赁补贴申请后，两三天就通过且拿到当月的补贴了。滨江政府的楼和图书馆（内部）等也都挺好看的。</p>
+<p>杭州市的地铁修得挺快的，赶上了亚运会的快车道，已通车的已接近 10 条线，共规划 16 条。杭州市很多地铁站都有自己独特的吊顶设计，我不知道是不是每个站都不一样，但我上下车和换乘的每个站好像都不一样（主要是 1 号线，4 号线，5 号线等），感觉挺好。另外有些地铁站无论是站内（闸机内）还是站外都有厕所，这一点好上加好。（南京相反，很多地铁站没厕所，而且没有修缮计划。我真的看不到“徽京”的前途。）</p>
+<p>杭州市的主要交通枢纽杭州东站设计得也挺好的，与地铁接续较快，厕所多而干净。可能大家不知道杭州东站的客流量，它其实客流量巨大，峰值在全国第二、第三的水平。关于杭州东站功能性的设计以及如何能让各路神仙列车入站，可以看这一篇<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/21286488">知乎文章</a>。（我研究杭州东站，一开始只是好奇“南京南的厕所这么脏（脏到有点无法忍受），杭州东的厕所这么干净，是不是单纯因为客流量不同呀。”结果却令人失望：如果相关，那也是负相关。）另外还得知了去上海的超导磁悬浮去年又提上了日程，到时候去上海城际只需 25 分钟。</p>
+<p>杭州地铁、高铁、机场、景区等的告示牌与导引信息较为充足——与上海比起来，（当年）上海的虹桥火车站和虹桥机场差点把我气疯。举例来说，地铁站里能看到站外公交信息。而虹桥给我印象很深的一件事是，闸机都是三杆子滚动的，大行李箱过不去；以及我过了机场安检在电子显示器上看到的还是高铁发车车次信息，我愣是找不到在哪个柜台值机的信息。感觉那会儿上海俩机场加一个高铁站经常让我感到崩溃，我甚至到了见一个人就要吐槽一次的地步。（我很久没去过上海了，不知是否有好转。）</p>
+<p>杭州主城区小，商圈比较密集，逛街较为省心。</p>
+<p>杭州一些新修的冷门博物馆也很有意思，除了展览外，还有亲子互动区和体感游戏等。展览也不仅只有功能性，比如我认为其展台从设计上来说颇具美感，它的配色、打光、形式还是挺值得学习的。甚至有些展台还自带布景和音效的。</p>
+<p>杭州是真的富，之前一次去安徽绩溪旅行，返程时因大雪和低温导致道路结冰，公交不通，只有当地“民营”的接驳车，而从绩溪开往临安的路，就如同从地狱通往天堂的路，也算是见识了……绩溪那边的路况堪称地狱级别，因为低温冰封，道路很窄；而山谷间还在开路和拓宽车道，所以能使用的车道就更窄了。而开路和拓宽车道的工程，导致路上坑坑洼洼、大小碎石堆积，行车颠簸不已。有时遇到施工工程车，又是黄土漫天。偶尔会通过沿道路两旁建设小屋的小镇，可以看到开着的小商铺，人们在太阳下下棋、打牌、闲聊等，也有的会去凝视经过的汽车。不知为何，那里有点（游戏里的）中东战地的感觉……然后开着开着，猛然上了柏油马路，马路上的白线黄线像新刷上去的一般，格外清晰；两旁的楼也变得错落有致，房顶颜色不一……感叹：贫富差距真的大。再看看 2018 年中国财政税收上缴数据，只有 8 个省是缴了钱的，其他省都在领钱。</p>
+<p>总体来说，我挺看好这个城市的，它的基建和一些现在不很引人注意的地方，十年、二十年后将会发挥价值。除了夏天常年 45-50 度的体感热到人要暴毙。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -385,203 +678,6 @@
 <h2 id="被包养与去工厂"><a href="#被包养与去工厂" class="headerlink" title="被包养与去工厂"></a>被包养与去工厂</h2><p><strong>2021 年 5 月 11 日</strong></p>
 <p>洗澡的时候隐约觉得找人包养与去工厂打工本质上好像也没什么不同，毕竟说白了都是为别人提供价值。只不过找人包养是为个别人提供某个价值，市场较小，不太稳定。而去工厂打工是为很多人提供某个价值，市场较大，因此也比较稳定。</p>
 <p>说到实现自己的价值，也许找人包养比起修福报更容易实现自己的价值，还真说不准。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.k331.one/2021/05/14/CallByValue/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpg">
-      <meta itemprop="name" content="Kylos | カラス">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精神病人思维广">
-      <meta itemprop="description" content="Make Shibaken Great Again.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 精神病人思维广">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/05/14/CallByValue/" class="post-title-link" itemprop="url">Call-By-X</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-05-14 23:25:17" itemprop="dateCreated datePublished" datetime="2021-05-14T23:25:17+08:00">2021-05-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-17 23:46:20" itemprop="dateModified" datetime="2023-05-17T23:46:20+08:00">2023-05-17</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><strong>2021 年 5 月 14 日</strong></p>
-<p>我想谈一谈我对 <em>call-by-value</em>、<em>call-by-name</em>、<em>call-by-need</em>、<em>call-by-reference</em> 的理解。这只是我的理解，应该与 Wikipedia 有出入——但我仍然坚持我的理解。</p>
-<h2 id="太长不看"><a href="#太长不看" class="headerlink" title="太长不看"></a>太长不看</h2><p>Call-by-value 与 call-by-name 放在一起比较时，call-by-value 表示函数调用时，实参要在调用函数前求到一个<strong>值</strong>。</p>
-<p>Call-by-value 与 call-by-reference 放在一起比较时，call-by-value 表示函数调用时，实参的地址中的<strong>内容</strong>，而不是地址本身，被传入函数。</p>
-<p>所以，call-by-value 这个词在不同的语境下的含义（居然）是截然不同的，这就是问题的根源。</p>
-<h2 id="不可变变量和值，以及-Call-by-Value"><a href="#不可变变量和值，以及-Call-by-Value" class="headerlink" title="不可变变量和值，以及 Call-by-Value"></a>不可变变量和值，以及 Call-by-Value</h2><p>在（一些）函数式语言的世界，如 Haskell，变量是不可被再次赋值的。所以假使有 <code>let x = True</code>，那么 <code>x</code> 和 <code>True</code>  可以划上等号：凡是见到 <code>x</code> 的地方，都可以替换成 <code>True</code>。因为 <code>x</code> 不可变，我们也不需要关心 <code>x</code> 究竟是存储在内存中，还是存储在火星上，或者说我们有魔法，<code>x</code> 不占用任何存储空间——这根本不重要，<code>x</code> 就是个常量，我不会去找到 <code>x</code> 再它把它的内容换掉。</p>
-<p>现在我们解释<strong>值</strong>这个概念。程序语言理论中，一门简单的语言可以只有<strong>表达式</strong>（expressions），或称之为<strong>项</strong>（terms），并且这些项最终都可以计算成<strong>值</strong>（values）。换句话说，<strong>值是不可再计算的项</strong>，它通常可以是项的子集。</p>
-<p>例如，可以认为 <code>1</code> 是值但 <code>2 + 3</code>不是，因为 <code>2 + 3</code> 还可以计算到 <code>5</code>。或者说项 <code>2 + 3</code> 的值是 <code>5</code>，而项 <code>1</code>的值就是 <code>1</code> 本身。</p>
-<p>有了值的定义，便可以解释 call-by-value、call-by-name、call-by-need。</p>
-<p>对于函数定义 <code>f(x) = x + x</code>，项 <code>t = 2 * 3</code> 和函数调用 <code>f(t)</code></p>
-<ul>
-<li>Call-by-value 指的是先把项 <code>t</code> 的值求出来，即 <code>6</code>，再将其传给形参 <code>x</code>，进行函数调用。</li>
-<li>Call-by-name 指的是将 <code>t</code> 直接传给形参，进行函数调用。也就是说，函数体内的（自由出现）的 <code>x</code> 都被替换为 <code>t</code>，即函数体变为 <code>t + t</code>。此时才会去求 <code>t</code> 的值，它还<strong>被求了 2 次</strong>。</li>
-<li>Call-by-need 同 call-by-name，但保证 <code>t</code> 只求一次，可以用 memoization 实现。</li>
-</ul>
-<p>小 tip：call-by-name 不一定就比 call-by-value 慢——例如，如果 name 在函数体内没被用到，则它根本不会被计算。</p>
-<p>到这里，一切安好。</p>
-<h2 id="可变变量、地址、值，以及-Call-by-Value"><a href="#可变变量、地址、值，以及-Call-by-Value" class="headerlink" title="可变变量、地址、值，以及 Call-by-Value"></a>可变变量、地址、值，以及 Call-by-Value</h2><p>然而，在函数式之外的世界，写程序几乎就是创建一些存储单元，再不断改变这些存储单元的内容——从图灵机开始，我们便知道纸带有左移右移操作和<strong>读写</strong>操作——这便是“万恶的源泉”。</p>
-<p>为了方便地访问预先创建的存储单元，我们给这些存储单元加上标签，并起名为变量。例如，<code>int a = 0;</code> 这条语句创建了一块存储单元，将其中的内容设置为 <code>0</code>，并且可以用标签（变量） <code>a</code> 方便地找到。</p>
-<p>那么就产生了一个严肃的问题。<strong>当我提到 <code>a</code> 的时候，我到底指的是那一块存储空间呢，还是那一块存储空间里面的内容 <code>0</code> 呢？</strong><code>a = a + 100;</code> 这条赋值语句中，等号左右的 <code>a</code> 都是些什么货色呢？大多数命令式语言，为了方便书写程序，都会自动将 <code>=</code> 左边的 <code>a</code> 解释为存储空间（的别名），而将 <code>=</code> 右边的 <code>a</code> 解释为存储空间中的内容。所以 <code>a = a + 100</code> 执行后，<code>a</code> 存储单元的值就从 <code>0</code> 变成了 <code>100</code>。</p>
-<p><strong>因此，存储单元——引用，reference；存储单元的内容——值，value。</strong></p>
-<p>这就有了 call-by-value 和 call-by-reference 的区别。还是对于函数定义 <code>f(x) = x + x</code>，项 <code>t = 2 * 3</code> 和函数调用 <code>f(t)</code></p>
-<ul>
-<li>Call-by-value 指的是把项 <code>t</code> 的存储空间的内容传给实参。</li>
-<li>Call-by-reference 指的是把项 <code>t</code> 的存储空间本身的地址、位置传给实参。</li>
-</ul>
-<p>所以这里的 call-by-value 和 call-by-reference，与上一小节的 call-by-value 和 call-by-name，根本就是<strong>两个不相交的维度的概念</strong>，但却都使用了 call-by-value 这个词。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>所以说，call-by-value 在不同语境下会有不同的含义，既可以指代将 term 计算成 value 再做函数调用，也可以指代将存储地址的内容（而非地址本身）传给函数的参数。</p>
-<p>大多数语言都是将 term 计算成 value 再做函数调用（也即 <em>strict</em>），如 C 系、Java 系（好吧，jvm 系）。也有 call-by-name 和 call-by-need 的（统称为 <em>non-strict</em>），如 Haskell。</p>
-<p>C 系语言一般是传存储单元的值，array 例外。如果想传存储单元的地址，需要使用 <code>&amp;</code> 符号。Java 系语言一般是传存储单元的地址，并且，（暂时还）没办法传存储单元的值。</p>
-<p>思考题：设有函数</p>
-<figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fn f(x) =</span><br><span class="line">    <span class="keyword">print</span>(x)</span><br><span class="line">    x := x + <span class="number">100</span></span><br><span class="line">    <span class="keyword">print</span>(x)</span><br><span class="line"><span class="keyword">end</span> fn</span><br></pre></td></tr></table></figure>
-
-<p>如果使用 call-by-name，<code>f(2+3)</code> 会得到什么样的函数体？<code>x := x + 100</code> 会变成 <code>2 + 3 := 2 + 3 + 100</code> 吗？</p>
-<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>后来竟然觉得 call-by-reference 可能说的是这种：变量 obj 有自己的地址，地址中存着一个值，但这个值永远是个固定大小的 pointer，指向（heap 里的）某个真实的存储空间——所以它仍然可以看作是地址。函数调用的时候就传那个指向（heap 里的）某个真实的存储空间的 pointer。遂去查了查，这个居然叫 call-by-sharing？哎呀哎呀，行吧，感觉这一领域术语太多太乱，会用就行，不需特别理解。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.k331.one/2021/04/20/FPBooks/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpg">
-      <meta itemprop="name" content="Kylos | カラス">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精神病人思维广">
-      <meta itemprop="description" content="Make Shibaken Great Again.">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 精神病人思维广">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/04/20/FPBooks/" class="post-title-link" itemprop="url">函数式编程入门书籍 Elementary Functional Programmings</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-04-20 23:25:17" itemprop="dateCreated datePublished" datetime="2021-04-20T23:25:17+08:00">2021-04-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-17 23:46:20" itemprop="dateModified" datetime="2023-05-17T23:46:20+08:00">2023-05-17</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>在编程语言这一点上，其实本人知道的也比较有限，只是比普通程序员多懂一点。</p>
-<p>以前读书的时候感觉周围的 PL（即 programming languages）研究者们关心的都是语言的“前中端问题”，例如类型系统和语义等；并没有太多与虚拟机、垃圾回收、IR 优化相关的话题。所以我这边推荐的入门书籍也还是以类型系统和语义为主的。</p>
-<p>对这些入门书籍的学习不仅仅是可以很好地了解编程语言的类型系统与语义，以至为 PL 专业的硕士、博士研究生铺平道路。更重要的是可以了解 turing-machine 之外的另一种计算模型，即 lambda calculus；可以了解到大家熟悉的 imperative、state-based、loop-based 之外的另一种编程思想，即 declarative、function-based、recursion-based 的编程思想——这种新的思想不一定能带来代码运行速度上的提升，但却几乎一定能带来抽象能力、问题拆解能力的提升。</p>
-<p>废话说得比较多了，下面是一些本人有所了解的书籍，有些可能比较旧了。而且书籍这种东西，对其评价或许也是带有很强的主观色彩的。</p>
-<p><a target="_blank" rel="noopener" href="https://www.cis.upenn.edu/~bcpierce/tapl/">《Types and Programming Languages》</a>，即耳熟能详的 TAPL，作者是 Pierce, Benjamin C。这是一本 2002 年出版的书，挺老了，但仍然是一本很棒的 PL <em>入门书</em>。通过阅读（和动手），我们会学到类型系统和语义的相关知识，以及 lambda calculus 的入门知识。可以从中系统地了解多态（即 polymorphism，如 Java 泛型，C++ 模板）的几个维度：类型依赖类型（如 <code>class List&lt;X&gt;</code>），项（类型的成员）依赖类型（如 <code>&lt;T&gt; boolean contains(Collection&lt;T&gt; c)</code>），以及类型依赖项（常用来写证明，无法用 Java 举例）；而最后一个最为常见的且抽象层级比较低的，项依赖项，就是大家最为熟悉的函数或者说方法。书中还会详尽地介绍子类型系统、交类型、并类型，以及子类型中的型变。这些知识对于日常编程以及熟练掌握一门程序语言自然是大有裨益的。此外，贯穿全书的是语言的类型检查、语义的形式化写法，以及两个重要结论及其证明：1 通过类型检查的代码要么是值，要么可以继续计算到值（progress），2 通过类型检查的代码，计算后的结果仍然可通过类型检查（preservation）。考察一门语言时，这两点也是要重点审视的。另外，就中国内地来说，北京大学有开课，可以参考，课件或许更适合中国人学习？（有一个比较精简的，Luca Cardelli 的《Type Systems》，40 几页，复习的时候用挺好。）</p>
-<p><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~rwh/pfpl/">《Practical Foundations for Programming Languages》</a>，即 PFPL，作者是 Robert Harper（<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~rwh/pfpl/2nded.pdf">官方免费版戳此</a>）。广度感觉特别广（特别是相对于上一本来说），覆盖了方方面面。唉，但一直没时间看，或者说每次看到 total functions 那里都中断了……我把大的主题（每一个主题都有若干章节）列一下吧，看完就知道有多广了：Judgments and Rules，Statics and Dynamics，Total Functions，Finite Data Types，Types and Propositions，Infinite Data Types，Variable Types，Partiality and Recursive Types，Dynamic Types，Subtyping，Dynamic Dispatch，Control Flow，Symbolic Data，Mutable State，Parallelism，Concurrency and Distribution，Modularity，Equational Reasoning。</p>
-<p>[《Type Theory and Formal Proof: An Introduction》](Type Theory and Formal Proof: An Introduction)，我只看了前 9 章左右，就我看的部分来说，基本在讲 lambda calculus。看引用数可能不是一本特别好的书，但对初学与入门 lambda calculus 的我来说还是很有帮助的。Lambda calculus 保留了核心的函数构造和函数调用，而将其余的语言成分（如自然数）都视为前者的编码。我们会惊叹原来这两条规则已经图灵完备了，任意复杂的代码都可以由其组合出。书里让我印象比较深刻的，一是前几个章节对不同维度的多态的介绍（在第一本书 TAPL 中有提及），以及最终组合出的精美的 lambda cube；二是 lambda calculus 通过统一、简洁的符号，表示出的 term : type : kind : sort 这一条链（如 <code>true : Bool : * : □</code>），至此（typing 的） <code>term : type</code> 和（kinding 的）<code>type : kind</code> 的许多规则可以统一合并；三是逻辑和类型的对应关系，例如逻辑中的 <code>P =&gt; Q</code> 就是 <code>P -&gt; Q</code> 这个函数类型呀。</p>
-<p><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/the-implementation-of-functional-programming-languages/">《The Implementation of Functional Programming Languages》</a>，没有博士学位的 Simon Peyton Jones 的著作，也是一本很老的书了，网上有<a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/the-implementation-of-functional-programming-languages/">官方公开的免费版</a>。这本书比较注重实践，读起来没那么抽象。前半部分讲了如何对一个还算丰富的表层语言做类型检查、解糖、翻译到精简的核心语言。如果我没记错的话，核心中的核心是 match 表达式和模式匹配。后半部分讲了图规约（graph reduction）算法和基于图规约的中间表示（IR）和抽象机 G-machine，以及相关的优化算法。这是一种完全不同于栈机（stack machine）的抽象机。Haskell 的编译器 GHC 的实现中大量用到了本书中的思想（毕竟本书作者就是 “GHC 之父”）。</p>
-<p>如果想学习函数式的数据结构和算法，那么 Chris Okasaki 的《Purely Functional Data Structures》（<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~rwh/theses/okasaki.pdf">这里有一本</a>）和 Richard Bird 的《Pearls of Functional Algorithm Design》（<a target="_blank" rel="noopener" href="https://doc.lagout.org/programmation/Functional%20Programming/Pearls%20of%20Functional%20Algorithm%20Design.pdf">这里有一本</a>）就挺好的。我记得读大学的时候，红黑树的删除（含旋转）操作简直是噩梦。但函数式基于模式匹配的写法，似乎十几行就完事了，理解起来异常简单。当然，我得提醒，函数式其实也没有高明到哪里，它不是万能的（这儿还有<a target="_blank" rel="noopener" href="https://www.infoq.cn/article/fzrra9e9kyo2ca56b2mv">一篇文章</a>）。</p>
-<p>学写证明的话，最近几年新出的《The Little Typer》或许不错。活到现在还不太会写证明，抱歉。</p>
-<p>说了这么多，其实有些大佬的页面就是宝藏。比如这位有三四个博士学位的（好像是物理、化学、计算机等）Oleg Kiselyov 的<a target="_blank" rel="noopener" href="http://okmij.org/ftp/">页面</a>就够大部分学一辈子了。里头都是抽象度贼高的运行速度还贼快的硬核神奇代码，再配上论文。<del>反正我是学不太会。</del></p>
-<p>另外，上面的推荐书籍也看出来了，我不是 Lisp 派。所以就遗漏了《Structure and Interpretation of Computer Programs》、《Essentials  of Programming Languages》等圣经。里面有些设计电路的章节也挺让人印象深刻的，确实巧妙。说起来就不爽，计算机理论专业干嘛要教 Verilog HDL 这种语言和用它写电路呢？听说牛津大学就是用 Haskell 写电路的。</p>
 
       
     </div>
